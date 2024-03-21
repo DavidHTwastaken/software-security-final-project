@@ -4,7 +4,7 @@ For this project, you are permitted to work in a group of 3-5 students.  Please 
 
 | Group Member Name    | GitHub Username     |
 | -------------------- | ------------------- |
-| <member full name 1> | <member username 1> |
+| Siddhant Das | Sid-26 |
 | <member full name 2> | <member username 2> |
 | <member full name 3> | <member username 3> |
 | <member full name 4> | <member username 4> |

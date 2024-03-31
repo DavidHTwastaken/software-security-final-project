@@ -5,10 +5,8 @@ For this project, you are permitted to work in a group of 3-5 students.  Please 
 | Group Member Name    | GitHub Username     |
 | -------------------- | ------------------- |
 | Siddhant Das | Sid-26 |
-| <member full name 2> | <member username 2> |
-| <member full name 3> | <member username 3> |
-| <member full name 4> | <member username 4> |
-| <member full name 5> | <member username 5> |
+|David Houle-Tymeczko |  DavidHTwastaken |
+|Sheida Ebrahimi Siaghi | Sheida-Ebrahimi |
 
 *Note:  It is not possible to earn full marks if you are not part of a group (accessibility exceptions excluded, of course).*
 

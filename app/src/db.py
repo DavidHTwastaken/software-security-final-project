@@ -5,7 +5,7 @@ import os
 class DB:
     def __init__(self) -> None:
         self.conn = psycopg2.connect(database="vulnerable",
-                                     host="localhost",
+                                     host=os.environ['DB_HOST'],
                                      user=os.environ['DB_USERNAME'],
                                      password=os.environ['DB_PASSWORD'])
         self.cur = self.conn.cursor()

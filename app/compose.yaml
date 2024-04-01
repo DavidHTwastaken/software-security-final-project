@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    environment:
+      POSTGRES_PASSWORD: habibi1234
+      POSTGRES_DB: vulnerable
+      POSTGRES_USER: postgres
+      PGUSER: postgres
+    networks:
+      - backend
+
+  server:
+    build: .
+    command: ["python", "src/app.py"]
+    ports:
+      - 5000:5000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      DB_USERNAME: postgres
+      DB_PASSWORD: habibi1234
+      POSTGRES_DB: vulnerable
+      DB_HOST: db
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /app
+          ignore:
+            - venv/
+        - action: rebuild
+          path: requirements.txt
+networks:
+  backend: {}

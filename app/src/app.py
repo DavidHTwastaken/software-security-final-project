@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request, jsonify
 from db import DB
+import flask_login
+
+login_manager = flask_login.LoginManager()
 
 
 app = Flask(__name__)
 db = DB()
+login_manager.init_app(app)
 
 
 @app.route('/')

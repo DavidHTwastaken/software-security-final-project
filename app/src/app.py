@@ -8,7 +8,7 @@ db = DB()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('login.html')
 
 
 @app.route('/login')
@@ -50,10 +50,10 @@ def register():
         print(user_created)
 
         if user_created:
-            return render_template('login.html', message='User created successfully.')
+            return jsonify({'auth': True}) 
     except Exception as e:
         print(e)
-        return render_template('register.html', message='An error occurred during registration: {e}')
+        return jsonify({'auth': False})
 
 
 if __name__ == '__main__':

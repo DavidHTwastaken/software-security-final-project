@@ -14,8 +14,8 @@
                 <input type="text" id="username" placeholder="username"/>
                 <input type="password" id="password" placeholder="password"/>
                 <input type="password" id="confirm-password" placeholder="confirm password"/>
-                <button id="register-form-submit">Register</button>
-                <p class="message">Already registered? <a href="/login">Sign In</a></p>
+                <button type="submit" id="register-form-submit">Register</button>
+                <p class="message">Already registered? <a href="{{ url_for('login') }}">Sign In</a></p>
               </form>
             </div>
           </div>

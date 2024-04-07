@@ -1,5 +1,7 @@
-<script>
-    
+<!doctype html>
+<html lang="en">
+
+<script>  
     function setActive(elem) {
         var a = document.getElementsByTagName('a');
         // loop through all 'a' elements
@@ -13,15 +15,18 @@
 
 </script>
 
+<body>
 <div class="header">
     <div class="header-left">
-      <a href="#home" onclick="setActive(this)">Bugs</a>
-      <a href="#contact" onclick="setActive(this)">About</a>
-      <a href="#difficulty" onclick="setActive(this)">Difficulty</a>
-      <a href="#about" onclick="setActive(this)">Log Out</a>
+      <a href="{{ url_for('bugs') }}"  onclick="setActive(this)">Bugs</a>
+      <a href="{{ url_for('about') }}" onclick="setActive(this)">About</a>
+      <a href="{{ url_for('difficulty') }}" onclick="setActive(this)">Difficulty</a>
+      <a href="{{ url_for('logout') }}" onclick="setActive(this)">Log Out</a>
     </div>
   </div>
 <link href='https://fonts.googleapis.com/css?family=IBM Plex Sans Condensed' rel='stylesheet'>
+</body>
+
 <style>
     .header {
     overflow: hidden;
@@ -63,3 +68,5 @@
     float: left;
     }
 </style>
+
+</html>

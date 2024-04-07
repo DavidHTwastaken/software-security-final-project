@@ -9,9 +9,12 @@ class DB:
                                      user=os.environ['DB_USERNAME'],
                                      password=os.environ['DB_PASSWORD'])
         self.cur = self.conn.cursor()
+        self.seed()
 
     def seed(self):
-        self.cur.exectute(open("../db.sql", "r").read())
+        file_dir = os.path.dirname(os.path.realpath(__file__))
+        seed_path = os.path.join(file_dir, "db.sql")
+        self.cur.execute(open(seed_path, "r").read())
         self.conn.commit()
 
     def get_users(self):

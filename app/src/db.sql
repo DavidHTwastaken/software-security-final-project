@@ -1,5 +1,5 @@
 -- Create the User table
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE
     users (
@@ -9,7 +9,7 @@ CREATE TABLE
     );
 
 -- Create the Product table
-DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS products CASCADE;
 
 CREATE TABLE
     products (
@@ -19,7 +19,7 @@ CREATE TABLE
     );
 
 -- Create the Junction table for User and Product with quantity
-DROP TABLE IF EXISTS user_products;
+DROP TABLE IF EXISTS user_products CASCADE;
 
 CREATE TABLE
     user_products (
@@ -62,7 +62,6 @@ VALUES
     (2, 5, 1),
     (3, 4, 4),
     (3, 7, 2),
-    (4, 6, 3),
     (4, 8, 6),
     (5, 1, 1),
     (5, 3, 2),
@@ -72,43 +71,9 @@ VALUES
     (7, 7, 3),
     (8, 2, 2),
     (8, 8, 1),
-    (1, 2, 2),
-    (2, 1, 1),
-    (3, 3, 3),
-    (4, 5, 2),
-    (5, 4, 1),
-    (6, 7, 4),
-    (7, 6, 2),
-    (8, 3, 1),
-    (1, 8, 3),
-    (2, 4, 4),
-    (3, 2, 1),
-    (4, 1, 2),
-    (5, 5, 3),
-    (6, 8, 1),
-    (7, 3, 2),
-    (8, 7, 3),
-    (1, 4, 1),
-    (2, 3, 2),
-    (3, 5, 3),
-    (4, 6, 2),
-    (5, 7, 1),
-    (6, 1, 2),
-    (7, 8, 4),
-    (8, 4, 2),
-    (1, 3, 1),
-    (2, 5, 2),
-    (3, 7, 3),
-    (4, 8, 2),
     (5, 2, 1),
-    (6, 4, 3),
-    (7, 6, 2),
     (8, 1, 1),
-    (1, 2, 2),
-    (2, 3, 3),
-    (3, 5, 1),
     (4, 7, 4),
     (5, 8, 2),
-    (6, 1, 1),
     (7, 4, 2),
     (8, 6, 3);

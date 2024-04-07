@@ -18,6 +18,7 @@ def login():
     password = data.get('password')
 
     user = db.get_user(username, password)
+    print(user)
 
     if user:
         return jsonify({'auth': True})

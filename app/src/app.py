@@ -8,6 +8,10 @@ db = DB()
 
 @app.route('/')
 def index():
+    return render_template('index.html')
+
+@app.route('/login')
+def login_page():
     return render_template('login.html')
 
 
@@ -23,8 +27,11 @@ def login():
     if user:
         return jsonify({'auth': True})
     else:
-        return jsonify({'auth': False})
-
+        return render_template('login.html', message='Invalid username or password.')
+    
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

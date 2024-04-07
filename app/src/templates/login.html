@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link rel="stylesheet" type="text/css" href="../static/login.css" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="../static/login_register.css" />
+        <title>Login Page</title>
     </head>
     <body>
-        <div class="login-container">
-            <form action="#" method="post">
-                <div class="form-group">
-                    <label for="username">Username: </label>
-                    <input name="username" id="username" type="text"/>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password: </label>
-                    <input name="password" id="password" type="password"/>
-                </div>
-                <div class="form-group">
-                    <button type="submit" id="login-form-submit">Login</button>
-                </div>
-            </form>
-        </div>
-        
-        <script src="../static/login.js"></script>
+        <div class="login-page">
+            <div class="form">
+            <h1>Login</h1>
+              <form class="login-form">
+                <input type="text" id="username" placeholder="username"/>
+                <input type="password" id="password" placeholder="password"/>
+                <button id="login-form-submit">Login</button>
+                <p class="message">Not registered? <a href="/register">Create an account</a></p>
+              </form>
+            </div>
+          </div>
+        <script src="../static/login_register.js"></script>
     </body>
 </html>
+

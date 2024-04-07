@@ -19,19 +19,19 @@ class DB:
         return self.cur.fetchall()
 
     def get_user(self, username, password):
-        self.cur.execute("SELECT * FROM users"
+        self.cur.execute("SELECT * FROM users "
                          "WHERE username=%s AND password=%s;",
                          (username, password))
         return self.cur.fetchall()
 
     def add_user(self, username, password):
-        self.cur.execute("INSERT INTO users(username, password)"
+        self.cur.execute("INSERT INTO users(username, password) "
                          "VALUES(%s, %s);", (username, password))
         self.conn.commit()
 
     def purchase(self, username, product):
-        self.cur.execute("INSERT INTO user_products (username, product)"
-                         "VALUES (%s, %s)"
+        self.cur.execute("INSERT INTO user_products (username, product) "
+                         "VALUES (%s, %s) "
                          "ON CONFLICT DO UPDATE "
                          "SET quantity = quantity + 1;",
                          (username, product))

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from db import DB
+from flask_login import current_user
 
 
 app = Flask(__name__)
@@ -8,7 +9,11 @@ db = DB()
 
 @app.route('/')
 def index():
-    return render_template('login.html')
+    if current_user.is_authenticated:
+        return render_template('bugs.html')
+    else:
+        return render_template('login.html')
+    
 
 
 @app.route('/login')

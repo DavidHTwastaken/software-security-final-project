@@ -27,10 +27,11 @@ class DB:
                          (username, password))
         return self.cur.fetchall()
 
-    def add_user(self, username, password):
+    def add_user(self, username, password) -> tuple | None:
         self.cur.execute("INSERT INTO users(username, password) "
-                         "VALUES(%s, %s);", (username, password))
+                         "VALUES(%s, %s) RETURNING user_id;", (username, password))
         self.conn.commit()
+        return self.cur.fetchone()
 
     def purchase(self, username, product):
         self.cur.execute("INSERT INTO user_products (username, product) "

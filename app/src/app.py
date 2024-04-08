@@ -1,16 +1,15 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 from db import DB
-
-from flask_login import current_user
 
 
 app = Flask(__name__)
 db = DB()
+app.secret_key = b'83b1188d5ce6cdccd04d037ed9fec28c14836710841762555675f7d3e999e4d8'
 
 
 @app.route('/')
 def index():
-    if current_user.is_authenticated:
+    if 'username' in session:
         return render_template('bugs.html')
     else:
         return render_template('login.html')
@@ -32,6 +31,7 @@ def login():
         app.logger.info(f'Result from database for login attempt: {user}')
 
         if user:
+            session['username'] = username
             return jsonify({'auth': True})
         else:
             return jsonify({'auth': False})
@@ -39,12 +39,12 @@ def login():
         app.logger.error(f"An error occurred when logging in: {e}")
 
 
-@app.get('/register')
+@app.route('/register')
 def register_page():
     return render_template('register.html')
 
 
-@app.post('/register')
+@app.route('/register', methods=["POST"])
 def register():
     try:
         data = request.json
@@ -55,7 +55,10 @@ def register():
         print(user_created)
 
         if user_created:
+            session['username'] = username
             return jsonify({'auth': True})
+        else:
+            return jsonify({'auth': False})
     except Exception as e:
         print(e)
         return jsonify({'auth': False})

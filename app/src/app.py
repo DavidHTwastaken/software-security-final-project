@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from db import DB
 
 
@@ -32,9 +32,9 @@ def login():
 
         if user:
             session['username'] = username
-            return jsonify({'auth': True})
+            return redirect(url_for('index'))
         else:
-            return jsonify({'auth': False})
+            return redirect(url_for('login'), 401)
     except Exception as e:
         app.logger.error(f"An error occurred when logging in: {e}")
 
@@ -56,9 +56,9 @@ def register():
 
         if user_created:
             session['username'] = username
-            return jsonify({'auth': True})
+            return redirect(url_for('index'))
         else:
-            return jsonify({'auth': False})
+            return redirect(url_for('register'), 401)
     except Exception as e:
         print(e)
         return jsonify({'auth': False})

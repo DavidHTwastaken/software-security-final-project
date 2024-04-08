@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form>
+<label for="difficulty">Choose a difficulty: </label>
+<select name="difficulty" id="difficulty">
+    <option value="0">No Security</option>
+    <option value="1">Some Security</option>
+    <option value="2">Maximum Security</option>
+</select>
+<button id="difficulty-submit-btn">Submit</button>
+</form>
+<script src="../static/difficulty.js"></script>
+{% endblock %}

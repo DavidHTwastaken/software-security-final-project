@@ -1,0 +1,41 @@
+@import url(https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed);
+
+.header {
+    overflow: hidden;
+    background-color: #2b2929;
+    padding: 20px 10px;
+    font-family: 'IBM Plex Sans Condensed';
+    font-size: 22px;
+    border-radius: 10px;
+    }
+
+.header a {
+float: left;
+color: rgb(255, 255, 255);
+text-align: center;
+padding: 12px;
+text-decoration: none;
+font-size: 18px;
+line-height: 25px;
+border-radius: 4px;
+}
+
+.header a.logo {
+font-size: 25px;
+font-weight: bold;
+}
+
+.header a:hover {
+background-color: #ddd;
+color: black;
+}
+
+
+.header a.active {
+background-color: dodgerblue;
+color: white;
+}
+
+.header-left {
+float: left;
+}

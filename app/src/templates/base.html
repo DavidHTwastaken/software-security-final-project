@@ -1,6 +1,12 @@
 <!doctype html>
+
 <html lang="en">
 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="../static/base.css" />
+<title>hello</title>
 <script>  
     function setActive(elem) {
         var a = document.getElementsByTagName('a');
@@ -14,6 +20,7 @@
     }
 
 </script>
+</head>
 
 <body>
 <div class="header">
@@ -24,49 +31,11 @@
       <a href="{{ url_for('logout') }}" onclick="setActive(this)">Log Out</a>
     </div>
   </div>
-<link href='https://fonts.googleapis.com/css?family=IBM Plex Sans Condensed' rel='stylesheet'>
+
+<div>
+    {% block content %}
+    {% endblock %}
+</div>
 </body>
-
-<style>
-    .header {
-    overflow: hidden;
-    background-color: #2b2929;
-    padding: 20px 10px;
-    font-family: 'IBM Plex Sans Condensed';
-    font-size: 22px;
-    border-radius: 10px;
-    }
-
-    .header a {
-    float: left;
-    color: rgb(255, 255, 255);
-    text-align: center;
-    padding: 12px;
-    text-decoration: none;
-    font-size: 18px;
-    line-height: 25px;
-    border-radius: 4px;
-    }
-
-    .header a.logo {
-    font-size: 25px;
-    font-weight: bold;
-    }
-
-    .header a:hover {
-    background-color: #ddd;
-    color: black;
-    }
-
-
-    .header a.active {
-    background-color: dodgerblue;
-    color: white;
-    }
-
-    .header-left {
-    float: left;
-    }
-</style>
 
 </html>

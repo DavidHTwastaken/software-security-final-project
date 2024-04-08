@@ -1,5 +1,5 @@
 document.getElementById('difficulty-submit-btn').addEventListener('click', (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const difficulty = parseInt(document.getElementById("difficulty").value);
     
     const data = {

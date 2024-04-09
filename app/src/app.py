@@ -106,13 +106,13 @@ def difficulty():
         session['difficulty'] = difficulty
 
         if session['difficulty'] == '0':
-            session['difficulty_name'] = "Low Security"
+            session['difficulty_name'] = "No Security"
         elif session['difficulty'] == '1':
-            session['difficulty_name'] = "Medium Security"
+            session['difficulty_name'] = "Some Security"
         elif session['difficulty'] == '2':
-            session['difficulty_name'] = "High Security"
+            session['difficulty_name'] = "Maximum Security"
     
-        return ('', 204)
+        return render_template('difficulty.html')
     else:
         return render_template('difficulty.html')
         

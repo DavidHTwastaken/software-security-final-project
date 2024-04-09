@@ -35,12 +35,12 @@ def login():
             session['username'] = username
 
             session['difficulty_name'] = "No Security"
- 
+
             return redirect(url_for('bugs'))
         else:
             flash("Login failed")
             return redirect(url_for('login'), 401)
-            
+
     except Exception as e:
         app.logger.error(f"An error occurred when logging in: {e}")
 
@@ -65,7 +65,6 @@ def register():
             session['username'] = username
 
             session['difficulty_name'] = "No Security"
-            
 
             return redirect(url_for('bugs'))
         else:
@@ -73,7 +72,7 @@ def register():
             return redirect(url_for('register'), 401)
     except Exception as e:
         print(e)
-        return jsonify({'auth': False, 'error':e})
+        return jsonify({'auth': False, 'error': e})
 
 
 @app.route('/bugs')
@@ -99,6 +98,7 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+
 @app.route('/difficulty', methods=['POST', 'GET'])
 def difficulty():
     if request.method == 'POST':
@@ -115,10 +115,6 @@ def difficulty():
         return render_template('difficulty.html')
     else:
         return render_template('difficulty.html')
-        
-    
-        
-            
 
 
 if __name__ == '__main__':

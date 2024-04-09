@@ -63,22 +63,27 @@ def register():
     except Exception as e:
         print(e)
         return jsonify({'auth': False})
-    
+
+
 @app.route('/bugs')
 def bugs():
     return render_template('bugs.html')
+
 
 @app.route('/about')
 def about():
     return render_template('about.html')
 
+
 @app.route('/difficulty')
 def difficulty():
     return render_template('difficulty.html')
 
+
 @app.route('/logout')
 def logout():
-    return "hello"
+    session['username'] = None
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':

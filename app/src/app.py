@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, flash, render_template, request, jsonify, session, redirect, url_for
 from db import DB
-import os
 
 app = Flask(__name__)
 db = DB()
@@ -34,12 +33,14 @@ def login():
         if user:
             session['difficulty'] = 0
             session['username'] = username
-            os.environ['username'] = session['username']
-            os.environ['difficulty'] = session['difficulty']
+
+            session['difficulty_name'] = "No Security"
 
             return redirect(url_for('bugs'))
         else:
-            return redirect(url_for('login'))
+            flash("Login failed")
+            return redirect(url_for('login'), 401)
+
     except Exception as e:
         app.logger.error(f"An error occurred when logging in: {e}")
 
@@ -63,15 +64,15 @@ def register():
             session['difficulty'] = 0
             session['username'] = username
 
-            os.environ['username'] = session['username']
-            os.environ['difficulty'] = session['difficulty']
+            session['difficulty_name'] = "No Security"
 
             return redirect(url_for('bugs'))
         else:
-            return redirect(url_for('register'))
+            flash("Registration failed")
+            return redirect(url_for('register'), 401)
     except Exception as e:
         print(e)
-        return jsonify({'auth': False})
+        return jsonify({'auth': False, 'error': e})
 
 
 @app.route('/bugs')
@@ -86,20 +87,34 @@ def about():
     return render_template('about.html')
 
 
-@app.route("/")
-@app.route('/difficulty')
-def difficulty():
-    return render_template('difficulty.html')
+# @app.route("/")
+# @app.route('/difficulty')
+# def difficulty():
+#     return render_template('difficulty.html')
 
 
 @app.route('/logout')
 def logout():
     session.clear()
-
-    del os.environ['username']
-    del os.environ['difficulty']
-
     return redirect(url_for('login'))
+
+
+@app.route('/difficulty', methods=['POST', 'GET'])
+def difficulty():
+    if request.method == 'POST':
+        difficulty = request.form.get('difficulty')
+        session['difficulty'] = difficulty
+
+        if session['difficulty'] == '0':
+            session['difficulty_name'] = "Low Security"
+        elif session['difficulty'] == '1':
+            session['difficulty_name'] = "Medium Security"
+        elif session['difficulty'] == '2':
+            session['difficulty_name'] = "High Security"
+
+        return ('', 204)
+    else:
+        return render_template('difficulty.html')
 
 
 if __name__ == '__main__':

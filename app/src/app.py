@@ -10,6 +10,7 @@ app.secret_key = b'83b1188d5ce6cdccd04d037ed9fec28c14836710841762555675f7d3e999e
 @app.route('/')
 def index():
     if 'username' in session:
+        app.logger.info('logged in')
         return render_template('bugs.html')
     else:
         return render_template('login.html')
@@ -62,6 +63,22 @@ def register():
     except Exception as e:
         print(e)
         return jsonify({'auth': False})
+    
+@app.route('/bugs')
+def bugs():
+    return render_template('bugs.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/difficulty')
+def difficulty():
+    return render_template('difficulty.html')
+
+@app.route('/logout')
+def logout():
+    return "hello"
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from db import DB
-
+import os
 
 app = Flask(__name__)
 db = DB()
@@ -34,6 +34,9 @@ def login():
         if user:
             session['difficulty'] = 0
             session['username'] = username
+            os.environ['username'] = session['username']
+            os.environ['difficulty'] = session['difficulty']
+
             return redirect(url_for('bugs'))
         else:
             return redirect(url_for('login'), 401)
@@ -59,6 +62,10 @@ def register():
         if user_created:
             session['difficulty'] = 0
             session['username'] = username
+
+            os.environ['username'] = session['username']
+            os.environ['difficulty'] = session['difficulty']
+
             return redirect(url_for('bugs'))
         else:
             return redirect(url_for('register'), 401)
@@ -88,6 +95,10 @@ def difficulty():
 @app.route('/logout')
 def logout():
     session.clear()
+
+    del os.environ['username'] 
+    del os.environ['difficulty'] 
+    
     return redirect(url_for('login'))
 
 

@@ -88,16 +88,37 @@ def about():
     return render_template('about.html')
 
 
-@app.route("/")
-@app.route('/difficulty')
-def difficulty():
-    return render_template('difficulty.html')
+# @app.route("/")
+# @app.route('/difficulty')
+# def difficulty():
+#     return render_template('difficulty.html')
 
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+@app.route('/difficulty', methods=['POST', 'GET'])
+def difficulty():
+    if request.method == 'POST':
+        difficulty = request.form.get('difficulty')
+        session['difficulty'] = difficulty
+
+        if session['difficulty'] == '0':
+            session['difficulty_name'] = "Low Security"
+        elif session['difficulty'] == '1':
+            session['difficulty_name'] = "Medium Security"
+        elif session['difficulty'] == '2':
+            session['difficulty_name'] = "High Security"
+    
+        return ('', 204)
+    else:
+        return render_template('difficulty.html')
+        
+    
+        
+            
 
 
 if __name__ == '__main__':

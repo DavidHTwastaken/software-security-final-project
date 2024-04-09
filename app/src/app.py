@@ -5,7 +5,6 @@ from db import DB
 app = Flask(__name__)
 db = DB()
 app.secret_key = b'83b1188d5ce6cdccd04d037ed9fec28c14836710841762555675f7d3e999e4d8'
-session['difficulty']
 
 
 @app.route('/')
@@ -25,7 +24,7 @@ def login_page():
 @app.route('/login', methods=['POST'])
 def login():
     try:
-        data = request.json
+        data = request.form
         username = data.get('username')
         password = data.get('password')
 
@@ -33,6 +32,7 @@ def login():
         app.logger.info(f'Result from database for login attempt: {user}')
 
         if user:
+            session['difficulty'] = 0
             session['username'] = username
             return redirect(url_for('bugs'))
         else:
@@ -49,7 +49,7 @@ def register_page():
 @app.route('/register', methods=["POST"])
 def register():
     try:
-        data = request.json
+        data = request.form
         username = data.get('username')
         password = data.get('password')
 
@@ -57,6 +57,7 @@ def register():
         app.logger.info(f'Result from add_user: {user_created}')
 
         if user_created:
+            session['difficulty'] = 0
             session['username'] = username
             return redirect(url_for('bugs'))
         else:
@@ -68,6 +69,8 @@ def register():
 
 @app.route('/bugs')
 def bugs():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     return render_template('bugs.html')
 
 
@@ -76,6 +79,7 @@ def about():
     return render_template('about.html')
 
 
+@app.route("/")
 @app.route('/difficulty')
 def difficulty():
     return render_template('difficulty.html')
@@ -83,7 +87,7 @@ def difficulty():
 
 @app.route('/logout')
 def logout():
-    session.pop('username')
+    session.clear()
     return redirect(url_for('login'))
 
 

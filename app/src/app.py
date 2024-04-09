@@ -11,9 +11,10 @@ session['difficulty']
 @app.route('/')
 def index():
     if 'username' in session:
-        return render_template('bugs.html')
+        app.logger.info('logged in')
+        return redirect(url_for('bugs'))
     else:
-        return render_template('login.html')
+        return redirect(url_for('login'))
 
 
 @app.route('/login')
@@ -33,7 +34,7 @@ def login():
 
         if user:
             session['username'] = username
-            return redirect(url_for('index'))
+            return redirect(url_for('bugs'))
         else:
             return redirect(url_for('login'), 401)
     except Exception as e:
@@ -53,11 +54,11 @@ def register():
         password = data.get('password')
 
         user_created = db.add_user(username, password)
-        print(user_created)
+        app.logger.info(f'Result from add_user: {user_created}')
 
         if user_created:
             session['username'] = username
-            return redirect(url_for('index'))
+            return redirect(url_for('bugs'))
         else:
             return redirect(url_for('register'), 401)
     except Exception as e:
@@ -65,9 +66,25 @@ def register():
         return jsonify({'auth': False})
 
 
+@app.route('/bugs')
+def bugs():
+    return render_template('bugs.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@app.route('/difficulty')
+def difficulty():
+    return render_template('difficulty.html')
+
+
 @app.route('/logout')
 def logout():
-    session['difficulty'] = None
+    session.pop('username')
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':

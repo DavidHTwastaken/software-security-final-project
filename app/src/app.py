@@ -39,7 +39,7 @@ def login():
 
             return redirect(url_for('bugs'))
         else:
-            return redirect(url_for('login'), 401)
+            return redirect(url_for('login'))
     except Exception as e:
         app.logger.error(f"An error occurred when logging in: {e}")
 
@@ -68,7 +68,7 @@ def register():
 
             return redirect(url_for('bugs'))
         else:
-            return redirect(url_for('register'), 401)
+            return redirect(url_for('register'))
     except Exception as e:
         print(e)
         return jsonify({'auth': False})
@@ -96,9 +96,9 @@ def difficulty():
 def logout():
     session.clear()
 
-    del os.environ['username'] 
-    del os.environ['difficulty'] 
-    
+    del os.environ['username']
+    del os.environ['difficulty']
+
     return redirect(url_for('login'))
 
 

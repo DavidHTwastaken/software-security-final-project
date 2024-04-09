@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, flash, render_template, request, jsonify, session, redirect, url_for
 from db import DB
-import os
 
 app = Flask(__name__)
 db = DB()
@@ -34,12 +33,14 @@ def login():
         if user:
             session['difficulty'] = 0
             session['username'] = username
-            os.environ['username'] = session['username']
-            os.environ['difficulty'] = session['difficulty']
 
+            session['difficulty_name'] = "No Security"
+ 
             return redirect(url_for('bugs'))
         else:
+            flash("Login failed")
             return redirect(url_for('login'), 401)
+            
     except Exception as e:
         app.logger.error(f"An error occurred when logging in: {e}")
 
@@ -63,15 +64,16 @@ def register():
             session['difficulty'] = 0
             session['username'] = username
 
-            os.environ['username'] = session['username']
-            os.environ['difficulty'] = session['difficulty']
+            session['difficulty_name'] = "No Security"
+            
 
             return redirect(url_for('bugs'))
         else:
+            flash("Registration failed")
             return redirect(url_for('register'), 401)
     except Exception as e:
         print(e)
-        return jsonify({'auth': False})
+        return jsonify({'auth': False, 'error':e})
 
 
 @app.route('/bugs')
@@ -95,10 +97,6 @@ def difficulty():
 @app.route('/logout')
 def logout():
     session.clear()
-
-    del os.environ['username'] 
-    del os.environ['difficulty'] 
-    
     return redirect(url_for('login'))
 
 

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form class="difficulty-form" action="{{ url_for_('difficulty') }}">
+<form class="difficulty-form" action="{{ url_for_('difficulty') }}" method="post">
 <label for="difficulty">Choose a difficulty: </label>
 <select name="difficulty" id="difficulty">
     <option value="0">No Security</option>
@@ -10,5 +10,4 @@
 </select>
 <button type="submit" id="difficulty-submit-btn">Submit</button>
 </form>
-<script src="../static/js/difficulty.js"></script>
 {% endblock %}

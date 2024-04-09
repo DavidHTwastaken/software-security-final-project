@@ -5,6 +5,7 @@ from db import DB
 app = Flask(__name__)
 db = DB()
 app.secret_key = b'83b1188d5ce6cdccd04d037ed9fec28c14836710841762555675f7d3e999e4d8'
+session['difficulty']
 
 
 @app.route('/')
@@ -62,6 +63,11 @@ def register():
     except Exception as e:
         print(e)
         return jsonify({'auth': False})
+
+
+@app.route('/logout')
+def logout():
+    session['difficulty'] = None
 
 
 if __name__ == '__main__':

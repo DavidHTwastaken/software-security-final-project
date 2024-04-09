@@ -33,7 +33,7 @@ def login():
 
         if user:
             session['username'] = username
-            return redirect(url_for('index'))
+            return redirect(url_for('bugs'))
         else:
             return redirect(url_for('login'), 401)
     except Exception as e:
@@ -57,7 +57,7 @@ def register():
 
         if user_created:
             session['username'] = username
-            return redirect(url_for('index'))
+            return redirect(url_for('bugs'))
         else:
             return redirect(url_for('register'), 401)
     except Exception as e:

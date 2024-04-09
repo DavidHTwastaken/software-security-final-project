@@ -30,6 +30,10 @@
       <a href="{{ url_for('difficulty') }}" onclick="setActive(this)">Difficulty</a>
       <a href="{{ url_for('logout') }}" onclick="setActive(this)">Log Out</a>
     </div>
+    <div class="header-right">
+        <span>Hello, {% config['username'] %}</span>
+        <span>Difficulty: {% config['difficulty'] %} </span>
+    </div>
   </div>
 
 <div>

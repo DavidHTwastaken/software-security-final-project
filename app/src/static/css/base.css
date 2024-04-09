@@ -7,17 +7,17 @@
     font-family: 'IBM Plex Sans Condensed';
     font-size: 22px;
     border-radius: 10px;
-    }
+}
 
 .header a {
-float: left;
-color: rgb(255, 255, 255);
-text-align: center;
-padding: 12px;
-text-decoration: none;
-font-size: 18px;
-line-height: 25px;
-border-radius: 4px;
+    float: left;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 25px;
+    border-radius: 4px;
 }
 
 .header a.logo {
@@ -38,4 +38,18 @@ color: white;
 
 .header-left {
 float: left;
+}
+
+.header-right {
+    float: right;
+}
+
+.header span {
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 15px;
+    color: white;
+    padding-block-end: 50px;
 }

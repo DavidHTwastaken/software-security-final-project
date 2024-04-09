@@ -11,9 +11,9 @@ app.secret_key = b'83b1188d5ce6cdccd04d037ed9fec28c14836710841762555675f7d3e999e
 def index():
     if 'username' in session:
         app.logger.info('logged in')
-        return render_template('bugs.html')
+        return redirect(url_for('bugs'))
     else:
-        return render_template('login.html')
+        return redirect(url_for('login'))
 
 
 @app.route('/login')
@@ -53,7 +53,7 @@ def register():
         password = data.get('password')
 
         user_created = db.add_user(username, password)
-        print(user_created)
+        app.logger.info(f'Result from add_user: {user_created}')
 
         if user_created:
             session['username'] = username
@@ -82,7 +82,7 @@ def difficulty():
 
 @app.route('/logout')
 def logout():
-    session['username'] = None
+    session.pop('username')
     return redirect(url_for('login'))
 
 

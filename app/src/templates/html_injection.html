@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="../static/css/bugs.css" />
+<h1>HTML Injection Example</h1>
+<form action="{{ url_for('html_injection') }}" method="GET">
+    <label for="input">Enter your input:</label><br>
+    <input type="text" id="input" name="input"><br>
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

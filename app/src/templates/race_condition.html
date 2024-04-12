@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<a id="prev-btn" href="{{url_for('bugs')}}" class="previous">&laquo; Go back</a>
 <div class="container">
     <h1>Hello {{session['username']}}, welcome to <b>the Shop™</b></h1>
     <div>You have ${{ balance }} in your account.</div>
@@ -75,4 +76,5 @@
             </tbody>
     </table>
 </div>
+<link rel="stylesheet" type="text/css" href="../static/css/race.css" />
 {% endblock %}

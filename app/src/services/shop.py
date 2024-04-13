@@ -1,10 +1,11 @@
-from app.src.db import DB
+from db import DB
 
 db = DB()
 
 class Shop:
     @staticmethod
     def buy(username: str, id: int):
+        return ""
         product = db.get_product(id)
         balance = db.get_balance(username)
 
@@ -17,7 +18,7 @@ class Shop:
             return "Insufficient funds"
 
         db.update_balance(username, value)
-        db.add_inventory(username,id)
+        db.add_to_inventory(username,id)
 
         if 5 == id:
             return "Congratulations, you solved the challenge"
@@ -26,15 +27,17 @@ class Shop:
 
     @staticmethod
     def sell(username: str, id: int):
-        product = db.get_product_from_inventory(username, id)
+        return ""
+        product_inventory = db.get_product_from_inventory(username, id)
         balance = db.get_balance(username)
 
-        if None == product:
+        if None == product_inventory:
             return "Product doesn't exist in inventory"
         
+        product = db.get_product(id)
         value = float(product['price'])
 
         db.update_balance(username, value)
-        db.remove_inventory(username,id)
+        db.remove_from_inventory(username,id)
 
         return ""

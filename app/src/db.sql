@@ -5,7 +5,8 @@ CREATE TABLE
     users (
         user_id SERIAL PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
-        password VARCHAR(100) NOT NULL
+        password VARCHAR(100) NOT NULL,
+        balance DECIMAL(19, 4) NOT NULL DEFAULT 0
     );
 
 -- Create the Product table
@@ -19,27 +20,27 @@ CREATE TABLE
     );
 
 -- Create the Junction table for User and Product with quantity
-DROP TABLE IF EXISTS user_products CASCADE;
+DROP TABLE IF EXISTS inventory CASCADE;
 
 CREATE TABLE
-    user_products (
+    inventory (
+        transaction_id SERIAL PRIMARY KEY,
         user_id INT REFERENCES users (user_id),
         product_id INT REFERENCES products (product_id),
-        quantity INT DEFAULT 0,
-        PRIMARY KEY (user_id, product_id)
+        purchase_date DATE NOT NULL DEFAULT CURRENT_DATE
     );
 
 INSERT INTO
-    users (username, password)
+    users (username, password, balance)
 VALUES
-    ('john_doe', 'password123'),
-    ('jane_smith', 'letmein'),
-    ('michael_jackson', 'thriller'),
-    ('maria_garcia', '123456'),
-    ('chris_evans', 'captainamerica'),
-    ('emma_watson', 'hermione'),
-    ('david_beckham', 'football'),
-    ('sid', '123');
+    ('john_doe', 'password123',20),
+    ('jane_smith', 'letmein',20),
+    ('michael_jackson', 'thriller',0),
+    ('maria_garcia', '123456',0),
+    ('chris_evans', 'captainamerica',0),
+    ('emma_watson', 'hermione',0),
+    ('david_beckham', 'football',20),
+    ('sid', '123',2000);
 
 INSERT INTO
     products (name, price)
@@ -58,26 +59,27 @@ VALUES
     ('Adidas Ultraboost', 139.99);
 
 INSERT INTO
-    user_products (user_id, product_id, quantity)
+    inventory (user_id, product_id)
 VALUES
-    (1, 1, 5),
-    (1, 3, 2),
-    (2, 2, 3),
-    (2, 5, 1),
-    (3, 4, 4),
-    (3, 7, 2),
-    (4, 8, 6),
-    (5, 1, 1),
-    (5, 3, 2),
-    (6, 4, 2),
-    (6, 6, 1),
-    (7, 5, 4),
-    (7, 7, 3),
-    (8, 2, 2),
-    (8, 8, 1),
-    (5, 2, 1),
-    (8, 1, 1),
-    (4, 7, 4),
-    (5, 8, 2),
-    (7, 4, 2),
-    (8, 6, 3);
+    (8, 3)
+    -- (1, 1, 5),
+    -- (1, 3, 2),
+    -- (2, 2, 3),
+    -- (2, 5, 1),
+    -- (3, 4, 4),
+    -- (3, 7, 2),
+    -- (4, 8, 6),
+    -- (5, 1, 1),
+    -- (5, 3, 2),
+    -- (6, 4, 2),
+    -- (6, 6, 1),
+    -- (7, 5, 4),
+    -- (7, 7, 3),
+    -- (8, 2, 2),
+    -- (8, 8, 1),
+    -- (5, 2, 1),
+    -- (8, 1, 1),
+    -- (4, 7, 4),
+    -- (5, 8, 2),
+    -- (7, 4, 2),
+    -- (8, 6, 3);

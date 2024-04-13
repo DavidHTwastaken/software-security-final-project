@@ -1,29 +1,31 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+
+{% block content %}
 <link rel="stylesheet" type="text/css" href="../static/css/bugs.css" />
-<table>
-  <thead>
-    <tr>
-      <th>Bug</th>
-      <th>Objective</th>
-      <th>Link</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>SQL Injection</td>
-      <td>Find admin's password</td>
-      <td><a href="{{url_for('sql_injection.index')}}">Start Challenge</a></td>
-    </tr>
-    <tr>
-      <td>HTML Injection</td>
-      <td>XSS Attack</td>
-      <td><a href="{{ url_for('html_injection')}}">Start Challenge</a></td>
-    </tr>
-    <tr>
-      <td>Race Condition Vulnerability</td>
-      <td>Buy the PS5</td>
-      <td><a href="{{ url_for('race')}}">Start Challenge</a></td>
-    </tr>
-  </tbody>
-</table>
+    <table>
+        <thead>
+            <tr>
+                <th>Bug</th>
+                <th>Objective</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>SQL Injection</td>
+                <td>Find admin's password</td>
+                <td><a href="{{url_for('sql_injection.index')}}">Start Challenge</a></td>
+            </tr>
+            <tr>
+                <td>Reflected HTML Injection</td>
+                <td>Create a JavaScript Alert</td>
+                <td><a href="{{ url_for('html_injection')}}">Start Challenge</a></td>
+            </tr>
+            <tr>
+                <td>Race Condition Vulnerability</td>
+                <td>Buy the PS5</td>
+                <td><a href="{{ url_for('race')}}">Start Challenge</a></td>
+            </tr>
+        </tbody>
+    </table>
 {% endblock %}

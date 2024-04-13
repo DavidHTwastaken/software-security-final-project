@@ -2,26 +2,70 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="../static/css/bugs.css" />
-<h1>Forum</h1>
-
-<div class="forum-posts" id="forum-posts">
-    <h2>Posts</h2>
-    <div class="post">
-        <p>This is the first post</p>
+<h1>Vulnerability: Reflected HTML Injection</h1>
+<div id="page-1" style="display: block;">
+    <div class="forum-posts" id="forum-posts">
+        <h3>What's your favorite thing in the world? page 1</h2>
+        <div class="post">
+            <p>User 1: Money</p>
+        </div>
+        <div class="post">
+            <p>User 2: Birb</p>
+        </div>
     </div>
-    <div class="post">
-        <p>This is the second post</p>
+    <form id="post-form" action="{{ url_for('html_injection') }}" method="POST">
+        <label for="post">Let us know:</label><br>
+        <textarea id="post" name="post" rows="4" cols="50"></textarea><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<div id="page-2" style="display: none;">
+    <div class="forum-posts" id="forum-posts">
+        <h3>What's your favorite thing in the world? page 2</h2>
+        <div class="post">
+            <p>User 1: Money</p>
+        </div>
+        <div class="post">
+            <p>User 2: Birb</p>
+        </div>
     </div>
+    <form id="post-form" action="{{ url_for('html_injection') }}" method="POST">
+        <label for="post">Let us know:</label><br>
+        <textarea id="post" name="post" rows="4" cols="50"></textarea><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<div id="page-3" style="display: none;">
+    <div class="forum-posts" id="forum-posts">
+        <h3>What's your favorite thing in the world? page 3</h2>
+        <div class="post">
+            <p>User 1: Money</p>
+        </div>
+        <div class="post">
+            <p>User 2: Birb</p>
+        </div>
+    </div>
+    <form id="post-form" action="{{ url_for('html_injection') }}" method="POST">
+        <label for="post">Let us know:</label><br>
+        <textarea id="post" name="post" rows="4" cols="50"></textarea><br>
+        <input type="submit" value="Submit">
+    </form>
 </div>
 
-<form id="post-form" action="{{ url_for('html_injection') }}" method="POST">
-    <label for="post">Add your post:</label><br>
-    <textarea id="post" name="post" rows="4" cols="50"></textarea><br>
-    <input type="submit" value="Submit">
-</form>
+<div id="success-message" style="display: none;">
+    <h1>Congratulations! You have successfully triggered the alert.</h1>
+</div>
+
+
 
 <script>
-    document.getElementById('post-form').addEventListener('click', function(event) {
+    // if({{ session["difficulty"] }} == '0'){
+    //     // render the first page, make the others invisible
+    // }
+    // // if == 1 render the second page, make the others invisible
+    // // else render the third page, make the others invisible
+    
+    document.getElementById('post-form').addEventListener('submit', function(event) {
         event.preventDefault(); 
         var formData = new FormData(this); 
         fetch(this.action, {
@@ -33,12 +77,19 @@
             var forumPosts = document.getElementById('forum-posts');
             var newPostElement = document.createElement('div');
             newPostElement.classList.add('post');
-            newPostElement.innerHTML = "<p>" + data + "</p>";
+            newPostElement.innerHTML = "<p>" + '{{ session["username"] }}' + ": "+ data + "</p>";
+
             forumPosts.appendChild(newPostElement);
             document.getElementById('post').value = ''; 
         })
+        
         .catch(error => console.error('Error:', error));
     });
+    var originalAlert = window.alert;
+    window.alert = function(message) {
+        originalAlert(message);
+        document.getElementById('success-message').style.display = 'block';
+    };
 </script>
 
 </body>

@@ -120,13 +120,19 @@ def html_injection():
 
 @app.route('/race')
 def race():
-    return render_template('race_condition.html',balance=20)
+    return render_template('race_condition.html',balance=20,inventory=[{
+        "id":1,
+        "name":"banana",
+        "buy_price":5.00,
+        "sell_price":5.00,
+        "date":"4-12-2024"
+        }])
 
 @app.route('/buy/<id>',methods=["POST"])
 def buy(id: int):
     pass
 
-@app.route('/buy/<id>',methods=["POST"])
+@app.route('/sell/<id>',methods=["POST"])
 def sell(id: int):
     pass
 

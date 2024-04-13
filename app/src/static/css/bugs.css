@@ -1,19 +1,33 @@
-ul {
+
+/* ul {
 list-style-type: none;
 margin: 0;
 padding: 0;
 width: 200px;
 background-color: #f1f1f1;
+} */
+/* .container {
+    display: inline-flex;
+    flex-direction: row;
+    max-width: 500px;
 }
+*/
 
-li a {
+td a {
 display: block;
 color: #000;
+background-color: #666;
 padding: 8px 16px;
 text-decoration: none;
+max-width: fit-content;
+border-radius: 4px;
 }
 
-li a:hover {
-background-color: #555;
+td a:hover {
+background-color: #a4a2a2;
 color: white;
+} 
+
+td {
+    padding-inline: 20px;
 }

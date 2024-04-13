@@ -2,9 +2,30 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="../static/css/bugs.css" />
-<ul>
-    <li><a href="#home">Bug1</a></li>
-    <li><a href="#news">Bug2</a></li>
-    <li><a href="{{ url_for('html_injection') }}">Bug3</a></li>
-</ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Bug</th>
+                <th>Objective</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Bug1</td>
+                <td>Objective</td>
+                <td><a href="#">Start Challenge</a></td>
+            </tr>
+            <tr>
+                <td>Bug2</td>
+                <td>Objective</td>
+                <td><a href="#">Start Challenge</a></td>
+            </tr>
+            <tr>
+                <td>Race Condition Vulnerability</td>
+                <td>Buy the PS5</td>
+                <td><a href="{{ url_for('race')}}">Start Challenge</a></td>
+            </tr>
+        </tbody>
+    </table>
 {% endblock %}

@@ -1,10 +1,14 @@
 @import url(https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed);
 
+* {
+    font-size: 100%;
+    font-family: 'IBM Plex Sans Condensed';
+}
+
 .header {
     overflow: hidden;
     background-color: #2b2929;
     padding: 20px 10px;
-    font-family: 'IBM Plex Sans Condensed';
     font-size: 22px;
     border-radius: 10px;
 }
@@ -52,4 +56,8 @@ float: left;
     line-height: 15px;
     color: white;
     padding-block-end: 50px;
+}
+
+.content {
+    padding-top: 20px;
 }

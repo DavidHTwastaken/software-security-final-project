@@ -1,5 +1,6 @@
 from flask import Flask, flash, render_template, request, jsonify, session, redirect, url_for
 from db import DB
+from services.shop import Shop
 
 app = Flask(__name__)
 db = DB()
@@ -119,6 +120,17 @@ def html_injection():
         return "Input received: " + user_input
     return render_template('html_injection.html')
 
+@app.route('/race')
+def race():
+    return render_template('race_condition.html',balance=20)
+
+@app.route('/buy/<id>',methods=["POST"])
+def buy(id: int):
+    pass
+
+@app.route('/buy/<id>',methods=["POST"])
+def sell(id: int):
+    pass
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

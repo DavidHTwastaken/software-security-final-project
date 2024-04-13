@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a id="prev-btn" href="{{url_for('bugs')}}" class="previous">&laquo; Go back</a>
+<div class="container">
+    <h1>Hello {{session['username']}}, welcome to <b>the Shop™</b></h1>
+    <div>You have ${{ balance }} in your account.</div>
+    <h3>What would you like to purchase today?</h3>
+    <label>All our products are certified quality!</label>
+    <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th> Name</th>
+                    <th>Price ($CAD)</th>
+                    <th >Image</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Bananas</td>
+                    <td>5</td>
+                    <td>Placeholder</td>
+                    <td>
+                        <form action="/buy/1" method="post">
+                            <input type="submit" value="Buy"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Milk</td>
+                    <td>10</td>
+                    <td>Placeholder</td>
+                    <td>
+                        <form action="/buy/2" method="post">
+                            <input type="submit" value="Buy"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Lego Set</td>
+                    <td>150</td>
+                    <td>Placeholder</td>
+                    <td>
+                        <form action="/buy/3" method="post">
+                            <input type="submit" value="Buy"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">4</th>
+                    <td>Barbie</td>
+                    <td>50</td>
+                    <td>Placeholder</td>
+                    <td>
+                        <form action="/buy/4" method="post">
+                            <input type="submit" value="Buy"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">5</th>
+                    <td>PS5</td>
+                    <td>500</td>
+                    <td>Placeholder</td>
+                    <td>
+                        <form action="/buy/5" method="post">
+                            <input type="submit" value="Buy"/>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+    </table>
+</div>
+<link rel="stylesheet" type="text/css" href="../static/css/race.css" />
+{% endblock %}

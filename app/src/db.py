@@ -8,7 +8,7 @@ class DB:
                                      host=os.environ['DB_HOST'],
                                      user=os.environ['DB_USERNAME'],
                                      password=os.environ['DB_PASSWORD'])
-        self.cur = self.conn.cursor()
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         self.seed()
 
     def seed(self):
@@ -39,4 +39,42 @@ class DB:
                          "ON CONFLICT DO UPDATE "
                          "SET quantity = quantity + 1;",
                          (username, product))
+        self.conn.commit()
+
+    def get_product(self, id: int) -> list[dict[any, any]]:
+        self.cur.execute("SELECT * FROM products "
+                         "WHERE product_id=%d"
+                        ,(id))
+        
+        self.conn.commit()
+        return self.cur.fetchone()
+    
+    def get_balance(self, username: str) -> list[dict[any, any]]:
+        self.cur.execute("SELECT balance FROM users "
+                         "WHERE username=%s"
+                        ,(username))
+        
+        self.conn.commit()
+        return self.cur.fetchone()
+    
+    def update_balance(self, username: str, value: float) -> list[dict[any, any]]:
+        self.cur.execute("UPDATE users "
+                         "SET balance = balance + %f "
+                         "WHERE username=%s "
+                        ,(value, username))
+        
+        self.conn.commit()
+    
+    def add_to_inventory(self, username: str, id: int) -> list[dict[any, any]]:
+        self.cur.execute("INSERT INTO inventory (product_id, user_id) "
+                         "VALUES (%d, (SELECT LIMIT 1 user_id FROM users WHERE username=%s)) "
+                        ,(id, username))
+
+        self.conn.commit()
+    
+    def remove_from_inventory(self, username: str, id: int) -> list[dict[any, any]]:
+        self.cur.execute("DELETE FROM inventory "
+                         "WHERE product_id=%d AND (SELECT LIMIT 1 user_id FROM users WHERE username=%s) "
+                        ,(id, username))
+
         self.conn.commit()

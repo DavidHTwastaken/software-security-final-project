@@ -126,15 +126,13 @@ def shop():
         "name":"banana",
         "price":5.00,
         "date":"4-12-2024"
-        }],error=error)
+        }],race_error=error)
 
 @app.route('/buy/<id>',methods=["POST"])
 def buy(id: int):
     error = Shop.buy(session["username"],id)
 
     return redirect(url_for('shop'),race_error=error)
-
-
 
 @app.route('/sell/<id>',methods=["POST"])
 def sell(id: int):

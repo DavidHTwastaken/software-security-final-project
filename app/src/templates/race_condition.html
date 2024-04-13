@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="../static/css/race.css" />
+
 <a id="prev-btn" href="{{url_for('bugs')}}" class="previous">&laquo; Go back</a>
 <div class="container">
     <h1>Hello {{session['username']}}, welcome to <b>the Shop™</b></h1>
     <div>You have ${{ balance }} in your account.</div>
     <h3>What would you like to purchase today?</h3>
     <label>All our products are certified quality!</label>
-    <table>
+    <table id="buy-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -75,6 +77,31 @@
                 </tr>
             </tbody>
     </table>
+
+    <h3>Current inventory</h3>
+    <table id="sell-table">
+        <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price ($CAD)</th>
+            <th >Date of purchase</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for e in inventory %}
+                <tr>
+                    <td>{{e.id}}</td>
+                    <td>{{e.name}}</td>
+                    <td>{{e.buy_price}}</td>
+                    <td>{{e.date}}</td>
+                    <td>
+                        <form action="/sell/{{e.id}}" method="post">
+                            <input type="submit" value="Sell"/>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-<link rel="stylesheet" type="text/css" href="../static/css/race.css" />
 {% endblock %}

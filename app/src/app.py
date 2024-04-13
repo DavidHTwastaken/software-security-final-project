@@ -1,10 +1,12 @@
 from flask import Flask, flash, render_template, request, jsonify, session, redirect, url_for
 from db import DB
 from services.shop import Shop
+from sql_injection import sql_injection
 
 app = Flask(__name__)
 db = DB()
 app.secret_key = b'83b1188d5ce6cdccd04d037ed9fec28c14836710841762555675f7d3e999e4d8'
+app.register_blueprint(sql_injection, url_prefix='/sqli')
 
 
 @app.route('/')
@@ -106,10 +108,11 @@ def difficulty():
             session['difficulty_name'] = "Some Security"
         elif session['difficulty'] == '2':
             session['difficulty_name'] = "Maximum Security"
-    
+
         return render_template('difficulty.html')
     else:
         return render_template('difficulty.html')
+
 
 @app.route('/html_injection', methods=['GET', 'POST'])
 def html_injection():
@@ -118,17 +121,27 @@ def html_injection():
         return user_input
     return render_template('html_injection.html')
 
+
 @app.route('/race')
 def race():
-    return render_template('race_condition.html',balance=20)
+    return render_template('race_condition.html', balance=20, inventory=[{
+        "id": 1,
+        "name": "banana",
+        "buy_price": 5.00,
+        "sell_price": 5.00,
+        "date": "4-12-2024"
+    }])
 
-@app.route('/buy/<id>',methods=["POST"])
+
+@app.route('/buy/<id>', methods=["POST"])
 def buy(id: int):
     pass
 
-@app.route('/buy/<id>',methods=["POST"])
+
+@app.route('/sell/<id>', methods=["POST"])
 def sell(id: int):
     pass
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="../static/css/bugs.css" />
+<h1>Forum</h1>
+
+<div class="forum-posts" id="forum-posts">
+    <h2>Posts</h2>
+    <div class="post">
+        <p>This is the first post</p>
+    </div>
+    <div class="post">
+        <p>This is the second post</p>
+    </div>
+</div>
+
+<form id="post-form" action="{{ url_for('html_injection') }}" method="POST">
+    <label for="post">Add your post:</label><br>
+    <textarea id="post" name="post" rows="4" cols="50"></textarea><br>
+    <input type="submit" value="Submit">
+</form>
+
+<script>
+    document.getElementById('post-form').addEventListener('click', function(event) {
+        event.preventDefault(); 
+        var formData = new FormData(this); 
+        fetch(this.action, {
+            method: this.method,
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            var forumPosts = document.getElementById('forum-posts');
+            var newPostElement = document.createElement('div');
+            newPostElement.classList.add('post');
+            newPostElement.innerHTML = "<p>" + data + "</p>";
+            forumPosts.appendChild(newPostElement);
+            document.getElementById('post').value = ''; 
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
+</body>
+{% endblock %}

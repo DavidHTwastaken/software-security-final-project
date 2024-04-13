@@ -88,12 +88,6 @@ def about():
     return render_template('about.html')
 
 
-# @app.route("/")
-# @app.route('/difficulty')
-# def difficulty():
-#     return render_template('difficulty.html')
-
-
 @app.route('/logout')
 def logout():
     session.clear()
@@ -116,6 +110,13 @@ def difficulty():
         return render_template('difficulty.html')
     else:
         return render_template('difficulty.html')
+
+@app.route('/html_injection', methods=['GET', 'POST'])
+def html_injection():
+    if request.method == 'POST':
+        user_input = request.form.get('post')
+        return user_input
+    return render_template('html_injection.html')
 
 @app.route('/race')
 def race():

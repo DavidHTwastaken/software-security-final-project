@@ -14,6 +14,4 @@ ENV FLASK_ENV=development
 
 CMD flask run --host=0.0.0.0 --debug
 
-RUN ls .
-RUN cat requirements.txt
 EXPOSE 5000

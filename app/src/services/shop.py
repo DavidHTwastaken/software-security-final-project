@@ -1,6 +1,7 @@
-from app.src.db import DB
+from db import DB
 
 db = DB()
+
 
 class Shop:
     @staticmethod
@@ -17,11 +18,11 @@ class Shop:
             return "Insufficient funds"
 
         db.update_balance(username, value)
-        db.add_inventory(username,id)
+        db.add_inventory(username, id)
 
         if 5 == id:
             return "Congratulations, you solved the challenge"
-        
+
         return ""
 
     @staticmethod
@@ -31,10 +32,10 @@ class Shop:
 
         if None == product:
             return "Product doesn't exist in inventory"
-        
+
         value = float(product['price'])
 
         db.update_balance(username, value)
-        db.remove_inventory(username,id)
+        db.remove_inventory(username, id)
 
         return ""

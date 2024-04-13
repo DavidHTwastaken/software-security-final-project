@@ -39,14 +39,18 @@ VALUES
     ('chris_evans', 'captainamerica'),
     ('emma_watson', 'hermione'),
     ('david_beckham', 'football'),
-    ('serena_williams', 'tennis');
+    ('sid', '123');
 
 INSERT INTO
     products (name, price)
 VALUES
+    ('Bananas',5),
+    ('Milk',10),
+    ('Lego Set',150),
+    ('Barbie',50),
+    ('PlayStation 5', 500),
     ('iPhone 13 Pro', 1099.99),
     ('Samsung Galaxy S21', 899.99),
-    ('PlayStation 5', 499.99),
     ('Nintendo Switch', 299.99),
     ('MacBook Pro 13"', 1299.99),
     ('Dell XPS 15', 1399.99),

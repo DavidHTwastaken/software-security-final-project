@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, flash, make_response, render_template, request, jsonify, session, redirect, url_for
 from db import DB
 from services.shop import Shop
 
@@ -118,23 +118,29 @@ def html_injection():
         return user_input
     return render_template('html_injection.html')
 
-@app.route('/race')
-def race():
+@app.route('/shop')
+def shop():
+    error = request.args.get('race_error') if None != request.args.get('race_error') else ""
     return render_template('race_condition.html',balance=20,inventory=[{
         "id":1,
         "name":"banana",
-        "buy_price":5.00,
-        "sell_price":5.00,
+        "price":5.00,
         "date":"4-12-2024"
-        }])
+        }],error=error)
 
 @app.route('/buy/<id>',methods=["POST"])
 def buy(id: int):
-    pass
+    error = Shop.buy(session["username"],id)
+
+    return redirect(url_for('shop'),race_error=error)
+
+
 
 @app.route('/sell/<id>',methods=["POST"])
 def sell(id: int):
-    pass
+    error = Shop.sell(session["username"],id)
+
+    return redirect(url_for('shop'),race_error=error)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

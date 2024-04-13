@@ -114,10 +114,8 @@ def difficulty():
 @app.route('/html_injection', methods=['GET', 'POST'])
 def html_injection():
     if request.method == 'POST':
-        user_input = request.form['input']
-        # Process the user input here
-        # Example: save to database, sanitize input, etc.
-        return "Input received: " + user_input
+        user_input = request.form.get('post')
+        return user_input
     return render_template('html_injection.html')
 
 @app.route('/race')

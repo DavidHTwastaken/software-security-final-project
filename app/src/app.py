@@ -6,7 +6,7 @@ from sql_injection import sql_injection
 app = Flask(__name__)
 db = DB()
 app.secret_key = b'83b1188d5ce6cdccd04d037ed9fec28c14836710841762555675f7d3e999e4d8'
-app.register_blueprint(sql_injection, url_prefix='sqli')
+app.register_blueprint(sql_injection, url_prefix='/sqli')
 
 
 @app.route('/')

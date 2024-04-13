@@ -92,10 +92,10 @@
                 <tr>
                     <td>{{e.id}}</td>
                     <td>{{e.name}}</td>
-                    <td>{{e.buy_price}}</td>
+                    <td>{{e.purchase_date}}</td>
                     <td>{{e.date}}</td>
                     <td>
-                        <form action="/sell/{{e.id}}" method="post">
+                        <form action="/sell/{{e.product_id}}" method="post">
                             <input type="submit" value="Sell"/>
                         </form>
                     </td>

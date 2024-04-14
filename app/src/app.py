@@ -3,10 +3,12 @@ import sys
 from flask import Flask, flash, make_response, render_template, request, jsonify, session, redirect, url_for
 from db import DB
 from services.shop import Shop
+from sql_injection import sql_injection
 
 app = Flask(__name__)
 db = DB()
 app.secret_key = b'83b1188d5ce6cdccd04d037ed9fec28c14836710841762555675f7d3e999e4d8'
+app.register_blueprint(sql_injection, url_prefix='/sqli')
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(logging.Formatter(
@@ -123,10 +125,11 @@ def difficulty():
             session['difficulty_name'] = "Some Security"
         elif session['difficulty'] == '2':
             session['difficulty_name'] = "Maximum Security"
-    
+
         return render_template('difficulty.html')
     else:
         return render_template('difficulty.html')
+
 
 @app.route('/html_injection', methods=['GET', 'POST'])
 def html_injection():
@@ -151,17 +154,20 @@ def shop():
     app.logger.info(f"race_error: {error}")
     return render_template('race_condition.html',balance=balance,inventory=inventory,race_error=error)
 
-@app.route('/buy/<id>',methods=["POST"])
+
+@app.route('/buy/<id>', methods=["POST"])
 def buy(id: int):
     error = Shop.buy(session["username"],id)
 
     return redirect(url_for('shop',race_error=error))
 
-@app.route('/sell/<id>',methods=["POST"])
+
+@app.route('/sell/<id>', methods=["POST"])
 def sell(id: int):
     error = Shop.sell(session["username"],id)
 
     return redirect(url_for('shop',race_error=error))
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

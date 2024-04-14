@@ -6,6 +6,7 @@ log = logging.getLogger('app.shop')
 
 db = DB()
 
+
 class Shop:
     @staticmethod
     def buy(username: str, id: int):

@@ -1,5 +1,6 @@
 import psycopg2
 import os
+from psycopg2.extras import RealDictCursor
 
 
 class DB:
@@ -8,7 +9,7 @@ class DB:
                                      host=os.environ['DB_HOST'],
                                      user=os.environ['DB_USERNAME'],
                                      password=os.environ['DB_PASSWORD'])
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+        self.cur = self.conn.cursor(cursor_factory = RealDictCursor)
         self.seed()
 
     def seed(self):
@@ -43,8 +44,8 @@ class DB:
 
     def get_product(self, id: int) -> list[dict[any, any]]:
         self.cur.execute("SELECT * FROM products "
-                         "WHERE product_id=%d"
-                        ,(id))
+                         "WHERE product_id=%s"
+                        ,(id,))
         
         self.conn.commit()
         return self.cur.fetchone()
@@ -52,29 +53,52 @@ class DB:
     def get_balance(self, username: str) -> list[dict[any, any]]:
         self.cur.execute("SELECT balance FROM users "
                          "WHERE username=%s"
-                        ,(username))
+                        ,(username,))
         
         self.conn.commit()
         return self.cur.fetchone()
     
-    def update_balance(self, username: str, value: float) -> list[dict[any, any]]:
+    def update_balance(self, username: str, balance: float) -> list[dict[any, any]]:
         self.cur.execute("UPDATE users "
-                         "SET balance = balance + %f "
+                         "SET balance= %s "
                          "WHERE username=%s "
-                        ,(value, username))
+                        ,(balance, username))
         
         self.conn.commit()
     
+    def get_inventory_for_user(self, username: str) -> list[dict[any, any]]:
+        self.cur.execute("SELECT  inv.transaction_id, prod.name, prod.price, inv.purchase_date "
+                        "FROM inventory AS inv "
+                        "INNER JOIN products AS prod ON inv.product_id = prod.product_id "
+                        "WHERE inv.user_id = (SELECT user_id FROM users WHERE username=%s LIMIT 1) "
+                        ,(username,))
+        
+        self.conn.commit()
+
+        rows = self.cur.fetchall()
+
+        res = [dict(row) for row in rows]
+        return res
+
     def add_to_inventory(self, username: str, id: int) -> list[dict[any, any]]:
         self.cur.execute("INSERT INTO inventory (product_id, user_id) "
-                         "VALUES (%d, (SELECT LIMIT 1 user_id FROM users WHERE username=%s)) "
+                         "VALUES (%s, (SELECT user_id FROM users WHERE username=%s LIMIT 1)) "
                         ,(id, username))
 
         self.conn.commit()
     
     def remove_from_inventory(self, username: str, id: int) -> list[dict[any, any]]:
         self.cur.execute("DELETE FROM inventory "
-                         "WHERE product_id=%d AND (SELECT LIMIT 1 user_id FROM users WHERE username=%s) "
+                         "WHERE transaction_id=%s AND user_id=(SELECT user_id FROM users WHERE username=%s LIMIT 1) "
                         ,(id, username))
 
         self.conn.commit()
+
+    def get_product_from_inventory(self, username: str, id: int) -> list[dict[any, any]]:
+        self.cur.execute("SELECT * FROM inventory "
+                         "WHERE transaction_id=%s AND user_id=(SELECT user_id FROM users WHERE username=%s LIMIT 1) "
+                        ,(id, username))
+
+        self.conn.commit()
+
+        return self.cur.fetchone()

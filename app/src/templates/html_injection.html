@@ -5,7 +5,7 @@
 <h1>Vulnerability: Reflected HTML Injection</h1>
 <div id="page-1" style="display: block;">
     <div class="forum-posts" id="forum-posts">
-        <h3>What's your favorite thing in the world? page 1</h2>
+        <h3>What's your favorite thing in the world?</h2>
         <div class="post">
             <p>User 1: Money</p>
         </div>
@@ -59,11 +59,29 @@
 
 
 <script>
-    // if({{ session["difficulty"] }} == '0'){
-    //     // render the first page, make the others invisible
-    // }
-    // // if == 1 render the second page, make the others invisible
-    // // else render the third page, make the others invisible
+    var difficulty = '{{ session["difficulty"] }}';
+
+    var firstPage = document.getElementById('page-1');
+    var secondPage = document.getElementById('page-2');
+    var thirdPage = document.getElementById('page-3');
+
+    function hideAllPages() {
+        firstPage.style.display = 'none';
+        secondPage.style.display = 'none';
+        thirdPage.style.display = 'none';
+    }
+
+    if (difficulty === '0') {
+        hideAllPages();
+        firstPage.style.display = 'block';
+    } else if (difficulty === '1') {
+        hideAllPages();
+        secondPage.style.display = 'block';
+    } else {
+        hideAllPages();
+        thirdPage.style.display = 'block';
+    }
+
     
     document.getElementById('post-form').addEventListener('submit', function(event) {
         event.preventDefault(); 

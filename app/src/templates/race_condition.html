@@ -90,12 +90,12 @@
         <tbody>
             {% for e in inventory %}
                 <tr>
-                    <td>{{e.id}}</td>
+                    <td>{{e.transaction_id}}</td>
                     <td>{{e.name}}</td>
-                    <td>{{e.buy_price}}</td>
-                    <td>{{e.date}}</td>
+                    <td>{{e.price}}</td>
+                    <td>{{e.purchase_date}}</td>
                     <td>
-                        <form action="/sell/{{e.id}}" method="post">
+                        <form action="/sell/{{e.transaction_id}}" method="post">
                             <input type="submit" value="Sell"/>
                         </form>
                     </td>

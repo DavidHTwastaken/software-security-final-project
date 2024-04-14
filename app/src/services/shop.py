@@ -1,4 +1,8 @@
 from db import DB
+from flask import session
+import logging
+
+log = logging.getLogger('app.shop')
 
 db = DB()
 
@@ -6,36 +10,54 @@ db = DB()
 class Shop:
     @staticmethod
     def buy(username: str, id: int):
-        product = db.get_product(id)
-        balance = db.get_balance(username)
+        try:
+            log.info(f"The id is {id} of type {type(id)}")
+            product = db.get_product(id)
+            balance = db.get_balance(username)
+            balance = float(balance['balance'])
 
-        if None == product:
-            return "Product not found"
+            if None == product:
+                return "Product not found"
 
-        value = float(product['price'])
+            value = float(product['price'])
 
-        if value > balance:
-            return "Insufficient funds"
+            if value > balance:
+                return "Insufficient funds"
 
-        db.update_balance(username, value)
-        db.add_inventory(username, id)
+            balance = balance - value
 
-        if 5 == id:
-            return "Congratulations, you solved the challenge"
+            db.update_balance(username, balance)
+            db.add_to_inventory(username,id)
+            session['balance'] = balance
+            log.info(f"The current balance is {balance}")
 
-        return ""
+            if 5 == int(id):
+                return "Congratulations, you solved the challenge"
+            
+            return ""
+        except Exception as e:
+            return e
 
     @staticmethod
     def sell(username: str, id: int):
-        product = db.get_product_from_inventory(username, id)
-        balance = db.get_balance(username)
+        try:
+            product_inventory = db.get_product_from_inventory(username, id)
 
-        if None == product:
-            return "Product doesn't exist in inventory"
+            if None == product_inventory:
+                return "Product doesn't exist in inventory"
+            
+            product = db.get_product(product_inventory['product_id'])
+            value = float(product['price'])
+            balance = db.get_balance(username).get('balance')
+            balance = float(balance)
+            balance = balance + value
+            db.update_balance(username, balance)
+            db.remove_from_inventory(username,id)
+            
+            balance = db.get_balance(username)
+            session['balance'] = float(balance.get('balance'))
+            log.info(f"The current balance is {balance}")
 
-        value = float(product['price'])
-
-        db.update_balance(username, value)
-        db.remove_inventory(username, id)
-
-        return ""
+            return ""
+        except Exception as e:
+            return e

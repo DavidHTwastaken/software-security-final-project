@@ -1,4 +1,6 @@
-from flask import Flask, flash, render_template, request, jsonify, session, redirect, url_for
+import logging
+import sys
+from flask import Flask, flash, make_response, render_template, request, jsonify, session, redirect, url_for
 from db import DB
 from services.shop import Shop
 from sql_injection import sql_injection
@@ -8,6 +10,11 @@ db = DB()
 app.secret_key = b'83b1188d5ce6cdccd04d037ed9fec28c14836710841762555675f7d3e999e4d8'
 app.register_blueprint(sql_injection, url_prefix='/sqli')
 
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+app.logger.addHandler(handler)
+app.logger.setLevel(logging.DEBUG)
 
 @app.route('/')
 def index():
@@ -31,19 +38,26 @@ def login():
         password = data.get('password')
 
         user = db.get_user(username, password)
+        balance = db.get_balance(username).get('balance')
+        balance = float(balance)
+
+        app.logger.info(f'The balance is {balance}')
         app.logger.info(f'Result from database for login attempt: {user}')
 
         if user:
             session['difficulty'] = 0
             session['username'] = username
+            session['balance'] = balance
 
             session['difficulty_name'] = "No Security"
 
+            inventory = db.get_inventory_for_user(session['username'])
+            app.logger.info(f'The current inventory is {inventory}')
             return redirect(url_for('bugs'))
         else:
             flash("Login failed")
             return redirect(url_for('login'), 401)
-
+        
     except Exception as e:
         app.logger.error(f"An error occurred when logging in: {e}")
 
@@ -66,6 +80,9 @@ def register():
         if user_created:
             session['difficulty'] = 0
             session['username'] = username
+            balance = 50
+            db.update_balance(username, balance)
+            session['balance'] = balance
 
             session['difficulty_name'] = "No Security"
 
@@ -120,27 +137,36 @@ def html_injection():
         user_input = request.form.get('post')
         return user_input
     return render_template('html_injection.html')
+'''
+[{
+        "id":1,
+        "name":"banana",
+        "price":5.00,
+        "date":"4-12-2024"
+        }]
+'''
+@app.route('/shop')
+def shop():
+    inventory = db.get_inventory_for_user(session['username'])
+    balance = session['balance']
+    error = request.args.get('race_error') if None != request.args.get('race_error') else ""
 
-
-@app.route('/race')
-def race():
-    return render_template('race_condition.html', balance=20, inventory=[{
-        "id": 1,
-        "name": "banana",
-        "buy_price": 5.00,
-        "sell_price": 5.00,
-        "date": "4-12-2024"
-    }])
+    app.logger.info(f"race_error: {error}")
+    return render_template('race_condition.html',balance=balance,inventory=inventory,race_error=error)
 
 
 @app.route('/buy/<id>', methods=["POST"])
 def buy(id: int):
-    pass
+    error = Shop.buy(session["username"],id)
+
+    return redirect(url_for('shop',race_error=error))
 
 
 @app.route('/sell/<id>', methods=["POST"])
 def sell(id: int):
-    pass
+    error = Shop.sell(session["username"],id)
+
+    return redirect(url_for('shop',race_error=error))
 
 
 if __name__ == '__main__':

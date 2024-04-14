@@ -74,35 +74,84 @@
     if (difficulty === '0') {
         hideAllPages();
         firstPage.style.display = 'block';
+        document.getElementById('post-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            var formData = new FormData(this); 
+            var forumPosts = document.getElementById('forum-posts');
+            var newPostElement = document.createElement('div');
+            fetch('/html_injection', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                
+                newPostElement.classList.add('post');
+                newPostElement.innerHTML = "<div>" + '{{ session["username"] }}' + ": "+ data + "</div>";
+
+                forumPosts.appendChild(newPostElement);
+                document.getElementById('post').value = ''; 
+            })
+            
+            .catch(error => console.error('Error:', error));
+        });
     } else if (difficulty === '1') {
         hideAllPages();
         secondPage.style.display = 'block';
+        document.getElementById('post-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            var formData = new FormData(this); 
+            var forumPosts = document.getElementById('forum-posts');
+            var newPostElement = document.createElement('div');
+            fetch('/html_injection', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                
+                newPostElement.classList.add('post');
+                data = data.replace(/<a.*?<\/a>/gi, '');
+                newPostElement.innerHTML = "<div>" + '{{ session["username"] }}' + ": "+ data + "</div>";
+
+                forumPosts.appendChild(newPostElement);
+                document.getElementById('post').value = ''; 
+            })
+            
+            .catch(error => console.error('Error:', error));
+        });
+        
     } else {
         hideAllPages();
         thirdPage.style.display = 'block';
+        document.getElementById('post-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            var formData = new FormData(this);
+            var userInput = formData.get('post');
+            
+            if (/<\/?[a-z][\s\S]*>/i.test(userInput)) {
+                alert('Please do not include HTML tags.');
+                return; 
+            }
+            
+            fetch(this.action, {
+                method: this.method,
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                var forumPosts = document.getElementById('forum-posts');
+                var newPostElement = document.createElement('div');
+                newPostElement.classList.add('post');
+                newPostElement.textContent = '{{ session["username"] }}' + ": " + data;
+
+                forumPosts.appendChild(newPostElement);
+                document.getElementById('post').value = ''; 
+            })
+            .catch(error => console.error('Error:', error));
+        });
     }
 
-    
-    document.getElementById('post-form').addEventListener('submit', function(event) {
-        event.preventDefault(); 
-        var formData = new FormData(this); 
-        fetch(this.action, {
-            method: this.method,
-            body: formData
-        })
-        .then(response => response.text())
-        .then(data => {
-            var forumPosts = document.getElementById('forum-posts');
-            var newPostElement = document.createElement('div');
-            newPostElement.classList.add('post');
-            newPostElement.innerHTML = "<p>" + '{{ session["username"] }}' + ": "+ data + "</p>";
-
-            forumPosts.appendChild(newPostElement);
-            document.getElementById('post').value = ''; 
-        })
-        
-        .catch(error => console.error('Error:', error));
-    });
     var originalAlert = window.alert;
     window.alert = function(message) {
         originalAlert(message);

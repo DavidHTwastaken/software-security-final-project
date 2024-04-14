@@ -8,15 +8,29 @@
 
 <a id="prev-btn" href="{{url_for('bugs')}}" class="previous">&laquo; Go back</a>
 <div id="content">
-  <form action="/submit" method="post">
-    <label for="answer">Enter solution: </label>
-    <input type="text" name="answer" id="answer" />
-    <button type="submit" id="submit-btn">Submit</button>
-  </form>
-  <form action="#">
+  <label for="answer">Enter solution: </label>
+  <input type="text" name="answer" id="answer" />
+  <button type="button" id="submit-btn">Submit</button>
+  <form action="/" method="get">
     <label for="query">Search for products: </label>
     <input type="text" name="query" id="query" />
-    <button type="submit" id="search-btn"></button>
+    <button type="submit" id="search-btn">Search</button>
   </form>
+  {% if results %}
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Price</th>
+    </tr>
+    {% for result in results %}
+    <tr>
+      <td>{{result.product_id}}</td>
+      <td>{{result.name}}</td>
+      <td>{{result.price}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
 </div>
 {% endblock %}

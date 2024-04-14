@@ -3,7 +3,7 @@ document.getElementById("submit-btn").addEventListener("click", (event) => {
   if (answer === null) {
     return;
   }
-  fetch("/submit", {
+  fetch("/sqli/submit", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

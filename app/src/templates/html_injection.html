@@ -24,8 +24,6 @@
     <h1>Congratulations! You have successfully triggered the alert.</h1>
 </div>
 
-
-
 <script>
     var difficulty = '{{ session["difficulty"] }}';
 
@@ -65,7 +63,10 @@
             .then(data => {
                 
                 newPostElement.classList.add('post');
-                data = data.replace(/<a.*?<\/a>/gi, '');
+                if (/<a.*?<\/a>/i.test(data) || /(http|https):\/\/\S+/i.test(data)) {
+                    alert('Sorry, links are not allowed on our website :(');
+                    return;
+                }
                 newPostElement.innerHTML = "<div>" + '{{ session["username"] }}' + ": "+ data + "</div>";
 
                 forumPosts.appendChild(newPostElement);
@@ -82,7 +83,7 @@
             var userInput = formData.get('post');
             
             if (/<\/?[a-z][\s\S]*>/i.test(userInput)) {
-                alert('Please do not include HTML tags.');
+                alert('Please do not include HTML tags or links.');
                 return; 
             }
             
@@ -107,7 +108,7 @@
     var originalAlert = window.alert;
     window.alert = function(message) {
         originalAlert(message);
-        if(message.includes('Please do not include HTML tags.')) {
+        if(message.includes('Please do not include HTML tags or links.') || message.includes('Sorry, links are not allowed on our website :(')) {
             document.getElementById('success-message').style.display = 'none';
         }
         else{

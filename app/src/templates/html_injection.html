@@ -5,39 +5,7 @@
 <h1>Vulnerability: Reflected HTML Injection</h1>
 <div id="page-1" style="display: block;">
     <div class="forum-posts" id="forum-posts">
-        <h3>What's your favorite thing in the world? page 1</h2>
-        <div class="post">
-            <p>User 1: Money</p>
-        </div>
-        <div class="post">
-            <p>User 2: Birb</p>
-        </div>
-    </div>
-    <form id="post-form" action="{{ url_for('html_injection') }}" method="POST">
-        <label for="post">Let us know:</label><br>
-        <textarea id="post" name="post" rows="4" cols="50"></textarea><br>
-        <input type="submit" value="Submit">
-    </form>
-</div>
-<div id="page-2" style="display: none;">
-    <div class="forum-posts" id="forum-posts">
-        <h3>What's your favorite thing in the world? page 2</h2>
-        <div class="post">
-            <p>User 1: Money</p>
-        </div>
-        <div class="post">
-            <p>User 2: Birb</p>
-        </div>
-    </div>
-    <form id="post-form" action="{{ url_for('html_injection') }}" method="POST">
-        <label for="post">Let us know:</label><br>
-        <textarea id="post" name="post" rows="4" cols="50"></textarea><br>
-        <input type="submit" value="Submit">
-    </form>
-</div>
-<div id="page-3" style="display: none;">
-    <div class="forum-posts" id="forum-posts">
-        <h3>What's your favorite thing in the world? page 3</h2>
+        <h3>What's your favorite thing in the world?</h2>
         <div class="post">
             <p>User 1: Money</p>
         </div>
@@ -56,39 +24,97 @@
     <h1>Congratulations! You have successfully triggered the alert.</h1>
 </div>
 
-
-
 <script>
-    // if({{ session["difficulty"] }} == '0'){
-    //     // render the first page, make the others invisible
-    // }
-    // // if == 1 render the second page, make the others invisible
-    // // else render the third page, make the others invisible
-    
-    document.getElementById('post-form').addEventListener('submit', function(event) {
-        event.preventDefault(); 
-        var formData = new FormData(this); 
-        fetch(this.action, {
-            method: this.method,
-            body: formData
-        })
-        .then(response => response.text())
-        .then(data => {
+    var difficulty = '{{ session["difficulty"] }}';
+
+    if (difficulty === '0') {
+        document.getElementById('post-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            var formData = new FormData(this); 
             var forumPosts = document.getElementById('forum-posts');
             var newPostElement = document.createElement('div');
-            newPostElement.classList.add('post');
-            newPostElement.innerHTML = "<p>" + '{{ session["username"] }}' + ": "+ data + "</p>";
+            fetch('/html_injection', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                
+                newPostElement.classList.add('post');
+                newPostElement.innerHTML = "<div>" + '{{ session["username"] }}' + ": "+ data + "</div>";
 
-            forumPosts.appendChild(newPostElement);
-            document.getElementById('post').value = ''; 
-        })
+                forumPosts.appendChild(newPostElement);
+                document.getElementById('post').value = ''; 
+            })
+            
+            .catch(error => console.error('Error:', error));
+        });
+    } else if (difficulty === '1') {
+        document.getElementById('post-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            var formData = new FormData(this); 
+            var forumPosts = document.getElementById('forum-posts');
+            var newPostElement = document.createElement('div');
+            fetch('/html_injection', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                
+                newPostElement.classList.add('post');
+                if (/<a.*?<\/a>/i.test(data) || /(http|https):\/\/\S+/i.test(data)) {
+                    alert('Sorry, links are not allowed on our website :(');
+                    return;
+                }
+                newPostElement.innerHTML = "<div>" + '{{ session["username"] }}' + ": "+ data + "</div>";
+
+                forumPosts.appendChild(newPostElement);
+                document.getElementById('post').value = ''; 
+            })
+            
+            .catch(error => console.error('Error:', error));
+        });
         
-        .catch(error => console.error('Error:', error));
-    });
+    } else {
+        document.getElementById('post-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            var formData = new FormData(this);
+            var userInput = formData.get('post');
+            
+            if (/<\/?[a-z][\s\S]*>/i.test(userInput)) {
+                alert('Please do not include HTML tags or links.');
+                return; 
+            }
+            
+            fetch(this.action, {
+                method: this.method,
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                var forumPosts = document.getElementById('forum-posts');
+                var newPostElement = document.createElement('div');
+                newPostElement.classList.add('post');
+                newPostElement.textContent = '{{ session["username"] }}' + ": " + data;
+
+                forumPosts.appendChild(newPostElement);
+                document.getElementById('post').value = ''; 
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
+
     var originalAlert = window.alert;
     window.alert = function(message) {
         originalAlert(message);
-        document.getElementById('success-message').style.display = 'block';
+        if(message.includes('Please do not include HTML tags or links.') || message.includes('Sorry, links are not allowed on our website :(')) {
+            document.getElementById('success-message').style.display = 'none';
+        }
+        else{
+            document.getElementById('success-message').style.display = 'block';
+        }
+       
     };
 </script>
 

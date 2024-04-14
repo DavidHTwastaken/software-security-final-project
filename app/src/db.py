@@ -21,10 +21,10 @@ class DB:
         self.cur.execute("SELECT * FROM users;")
         return self.cur.fetchall()
 
-    def get_user(self, username, password):
+    def get_user(self, username):
         self.cur.execute("SELECT * FROM users "
-                         "WHERE username=%s AND password=%s;",
-                         (username, password))
+                         "WHERE username=%s;",
+                         (username,))
         return self.cur.fetchall()
 
     def add_user(self, username, password) -> tuple | None:

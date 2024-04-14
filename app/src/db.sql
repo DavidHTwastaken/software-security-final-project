@@ -33,22 +33,23 @@ CREATE TABLE
 INSERT INTO
     users (username, password, balance)
 VALUES
-    ('john_doe', 'password123',20),
-    ('jane_smith', 'letmein',20),
-    ('michael_jackson', 'thriller',0),
-    ('maria_garcia', '123456',0),
-    ('chris_evans', 'captainamerica',0),
-    ('emma_watson', 'hermione',0),
-    ('david_beckham', 'football',20),
-    ('sid', '123',2000);
+    ('john_doe', 'password123', 20),
+    ('jane_smith', 'letmein', 20),
+    ('michael_jackson', 'thriller', 0),
+    ('maria_garcia', '123456', 0),
+    ('chris_evans', 'captainamerica', 0),
+    ('emma_watson', 'hermione', 0),
+    ('david_beckham', 'football', 20),
+    ('sid', '123', 2000),
+    ('admin', 'Y876523ASD76^&', 0);
 
 INSERT INTO
     products (name, price)
 VALUES
-    ('Bananas',5),
-    ('Milk',10),
-    ('Lego Set',150),
-    ('Barbie',50),
+    ('Bananas', 5),
+    ('Milk', 10),
+    ('Lego Set', 150),
+    ('Barbie', 50),
     ('PlayStation 5', 500),
     ('iPhone 13 Pro', 1099.99),
     ('Samsung Galaxy S21', 899.99),

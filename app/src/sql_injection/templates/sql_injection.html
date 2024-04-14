@@ -1,6 +1,22 @@
 {% extends 'base.html' %} {% block content %}
-<link rel="stylesheet" type="text/css" href="" />
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{{url_for('sql_injection.static', filename='styles.css')}}"
+/>
 
 <a id="prev-btn" href="{{url_for('bugs')}}" class="previous">&laquo; Go back</a>
-<div class="container"></div>
+<div id="content">
+  <form action="/submit" method="post">
+    <label for="answer">Enter solution: </label>
+    <input type="text" name="answer" id="answer" />
+    <button type="submit" id="submit-btn">Submit</button>
+  </form>
+  <form action="#">
+    <label for="query">Search for products: </label>
+    <input type="text" name="query" id="query" />
+    <button type="submit" id="search-btn"></button>
+  </form>
+</div>
 {% endblock %}

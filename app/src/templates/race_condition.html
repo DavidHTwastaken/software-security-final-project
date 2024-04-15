@@ -96,6 +96,7 @@
                     <td>{{e.purchase_date}}</td>
                     <td>
                         <form action="/sell/{{e.transaction_id}}" method="post">
+                            <input type="hidden" value="{{ e.product_id }}" id="product-id" name="product-id"/>
                             <input type="submit" value="Sell"/>
                         </form>
                     </td>

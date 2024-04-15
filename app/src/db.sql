@@ -6,7 +6,7 @@ CREATE TABLE
         user_id SERIAL PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
         password VARCHAR(100) NOT NULL,
-        balance DECIMAL(19, 4) NOT NULL DEFAULT 0
+        balance DECIMAL(19, 4) NOT NULL DEFAULT 20
     );
 
 -- Create the Product table

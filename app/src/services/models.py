@@ -35,6 +35,7 @@ class Inventory(Model):
     product_name = CharField(max_length=200)
     value = DecimalField()
     purchase_date = DateField(default=datetime.datetime.now())
+    lock = CharField(default="")
     
     class Meta:
         database = orm_db

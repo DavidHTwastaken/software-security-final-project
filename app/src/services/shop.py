@@ -7,11 +7,11 @@ from .models import Users, Products, Inventory, DatabaseError
 log = logging.getLogger('app.shop')
 # db = DB()
 
-# 'level one is doing it as is'
+'level one is doing it as is'
 
-# 'level 2 -> disable selling but keep that endpoint open'
+'level 2 -> disable selling but keep that endpoint open'
 
-# 'level 3 -> lock val with atomicity'
+'level 3 -> lock val with atomicity'
 
 class Shop:
     @staticmethod
@@ -125,11 +125,12 @@ class Shop:
     @staticmethod
     @orm_db.connection_context()
     def get_user(session_token: str):
-        try:
-            user = Users.get(session_token==Users.token)
-            inventory_orm = Inventory.select().where(Inventory.user_id ==user.user_id)
-        except DatabaseError as e:
-            log.info(e)
-            return "Oopsie, an error occured, check server logs"
+        users_orm = Users.select().where(session_token==Users.token)
+        
+        if 0 == len(users_orm):
+            return False, 0, None, ""
+        
+        user = users_orm[0]
+        inventory_orm = Inventory.select().where(Inventory.user_id ==user.user_id)
 
         return True, user.balance, [_ for _ in inventory_orm], user.username

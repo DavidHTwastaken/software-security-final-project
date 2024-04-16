@@ -88,20 +88,32 @@
             <th></th>
         </thead>
         <tbody>
-            {% for e in inventory %}
-                <tr>
-                    <td>{{e.transaction_id}}</td>
-                    <td>{{e.product_name}}</td>
-                    <td>{{e.value}}</td>
-                    <td>{{e.purchase_date}}</td>
-                    <td>
-                        <form action="/sell/{{e.transaction_id}}" method="post">
-                            <input type="hidden" value="{{ e.product_id }}" id="product-id" name="product-id"/>
-                            <input type="submit" value="Sell"/>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
+            {% if '1' == session["difficulty"] %}
+                {% for e in inventory %}
+                    <tr>
+                        <td></td>
+                        <td>{{e.product_name}}</td>
+                        <td>{{e.value}}</td>
+                        <td>{{e.purchase_date}}</td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for e in inventory %}
+                    <tr>
+                        <td>{{e.transaction_id}}</td>
+                        <td>{{e.product_name}}</td>
+                        <td>{{e.value}}</td>
+                        <td>{{e.purchase_date}}</td>
+                        <td>
+                            <form action="/sell/{{e.transaction_id}}" method="post">
+                                <input type="hidden" value="{{ e.product_id }}" id="product-id" name="product-id"/>
+                                <input type="submit" value="Sell"/>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
         </tbody>
     </table>
 </div>

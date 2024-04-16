@@ -1,4 +1,4 @@
-
+from flask import session
 import logging
 from .models import orm_db
 from uuid import uuid4
@@ -7,6 +7,11 @@ from .models import Users, Products, Inventory, DatabaseError
 log = logging.getLogger('app.shop')
 # db = DB()
 
+# 'level one is doing it as is'
+
+# 'level 2 -> disable selling but keep that endpoint open'
+
+# 'level 3 -> lock val with atomicity'
 
 class Shop:
     @staticmethod
@@ -63,32 +68,68 @@ class Shop:
     @orm_db.connection_context()
     def sell(session_token: str, transaction_id: int):
         try:
-            inventory_product = Inventory.get(Inventory.transaction_id == transaction_id)
             user = Users.get(session_token==Users.token)
         except DatabaseError as e:
             log.debug(e)
             return "Oopsie, an error occured, check server logs"
         
-        new_balance = user.balance + inventory_product.value
+        if '2' == session['difficulty']:
+            lock = str(uuid4())
+            with orm_db.atomic() as transaction:
+                try:
+                    isLocked = Inventory.update(lock=lock).where(Inventory.transaction_id==transaction_id).where(Inventory.user_id==user.user_id).where(Inventory.lock=="").execute()
+                    transaction.commit()
+                except DatabaseError as e:
+                    transaction.rollback()
+                    log.debug(e)
+                    return "Oopsie, an error occured, check server logs"
+                
+            if 1 != isLocked:
+                return "Lock can't be processed"
+            
+            try:
+                inventory_product = Inventory.get(Inventory.transaction_id == transaction_id)
+            except DatabaseError as e:
+                log.debug(e)
+                return "Oopsie, an error occured, check server logs"
+            
+            if lock != inventory_product.lock:
+                return "Lock check failed"
+            
+            new_balance = user.balance + inventory_product.value
 
-        try:
-            Inventory.delete().where(Inventory.transaction_id==inventory_product.transaction_id).execute()
-            Users.update(balance=new_balance).where(Users.user_id==user.user_id).execute()
-        except DatabaseError as e:
-            log.info(e)
-            return "Oopsie, an error occured, check server logs"        
+            try:
+                Inventory.delete().where(Inventory.transaction_id==inventory_product.transaction_id).execute()
+                Users.update(balance=new_balance).where(Users.user_id==user.user_id).execute()
+            except DatabaseError as e:
+                log.info(e)
+                return "Oopsie, an error occured, check server logs" 
+        else:
+            try:
+                inventory_product = Inventory.get(Inventory.transaction_id == transaction_id)
+            except DatabaseError as e:
+                log.debug(e)
+                return "Oopsie, an error occured, check server logs"
+        
+            new_balance = user.balance + inventory_product.value
+
+            try:
+                Inventory.delete().where(Inventory.transaction_id==inventory_product.transaction_id).execute()
+                Users.update(balance=new_balance).where(Users.user_id==user.user_id).execute()
+            except DatabaseError as e:
+                log.info(e)
+                return "Oopsie, an error occured, check server logs"        
 
         return ""
 
     @staticmethod
     @orm_db.connection_context()
     def get_user(session_token: str):
-        users_orm = Users.select().where(session_token==Users.token)
-        
-        if 0 == len(users_orm):
-            return False, 0, None, ""
-        
-        user = users_orm[0]
-        inventory_orm = Inventory.select().where(Inventory.user_id ==user.user_id)
+        try:
+            user = Users.get(session_token==Users.token)
+            inventory_orm = Inventory.select().where(Inventory.user_id ==user.user_id)
+        except DatabaseError as e:
+            log.info(e)
+            return "Oopsie, an error occured, check server logs"
 
         return True, user.balance, [_ for _ in inventory_orm], user.username

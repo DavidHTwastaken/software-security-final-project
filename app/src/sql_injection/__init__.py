@@ -47,7 +47,7 @@ def index():
 
 @sql_injection.post('/submit')
 def submit():
-    answer = request.form.get('answer')
+    answer = request.json.get('answer')
     db.cur.execute("SELECT password FROM users WHERE username='admin';")
     real_answer = db.cur.fetchone()
     if real_answer and answer == real_answer['password']:

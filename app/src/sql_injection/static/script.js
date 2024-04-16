@@ -1,6 +1,6 @@
 function submitAnswer(endpoint) {
   const answerInput = document.getElementById("answer");
-  let answer = answerInput.textContent;
+  let answer = answerInput.value;
   if (answer === null) {
     return;
   }

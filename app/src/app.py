@@ -49,12 +49,9 @@ def login():
         if user:
             session['difficulty'] = '0'
             session['username'] = username
-            # session['balance'] = balance
-
             session['difficulty_name'] = "No Security"
 
-            # inventory = db.get_inventory_for_user(session['username'])
-            # app.logger.info(f'The current inventory is {inventory}')
+            app.logger.info(f'The current difficulty is {session['difficulty']} of type {type(session.get('difficulty'))}')
             return redirect(url_for('bugs'))
         else:
             flash("Login failed")
@@ -82,12 +79,9 @@ def register():
         if user_created:
             session['difficulty'] = '0'
             session['username'] = username
-            balance = 50
-            db.update_balance(username, balance)
-            session['balance'] = balance
-
             session['difficulty_name'] = "No Security"
 
+            app.logger.info(f'The current difficulty is {session['difficulty']} of type {type(session.get('difficulty'))}')
             return redirect(url_for('bugs'))
         else:
             flash("Registration failed")
@@ -128,6 +122,7 @@ def difficulty():
         elif session['difficulty'] == '2':
             session['difficulty_name'] = "Maximum Security"
 
+        app.logger.info(f'The current difficulty is {session['difficulty']} of type {type(session.get('difficulty'))}')
         return render_template('difficulty.html')
     else:
         return render_template('difficulty.html')
@@ -161,7 +156,10 @@ def shop():
         session_token = request.cookies.get("shop_token")
 
         if session_token and len(session_token) > 5:
-            loggedIn, balance, inventory, username = Shop.get_user(session_token)
+            if '2' == session.get('difficulty'):
+                loggedIn, balance, inventory, username = Shop.get_user2(session_token)
+            else:
+                loggedIn, balance, inventory, username = Shop.get_user(session_token)
             
             if not loggedIn:
                 response = make_response(redirect('/shop'))
@@ -183,7 +181,11 @@ def shop():
 def buy(id: int):
     cookies = request.cookies
     token = cookies.get('shop_token')
-    error = Shop.buy(token, id)
+    if '2' == session.get('difficulty'):
+        error = Shop.buy2(token, id)
+    else:
+        error = Shop.buy(token, id)
+    
 
     if error == "":
         return make_response(redirect('/shop'))
@@ -196,7 +198,10 @@ def buy(id: int):
 def sell(id: int):
     cookies = request.cookies
     token = cookies.get('shop_token')
-    error = Shop.sell(token, id)
+    if '2' == session.get('difficulty'):
+        error = Shop.sell2(token, id)
+    else:
+        error = Shop.sell(token, id)
 
     if error == "":
         return make_response(redirect('/shop'))

@@ -2,12 +2,9 @@ import logging
 from peewee import *
 import datetime
 
+
 log = logging.getLogger('app.models')
 orm_db = SqliteDatabase('shop.db')
-
-# class BaseModel(Model):
-#     class Meta:
-#         database = orm_db
 
 class Users(Model):
     user_id = AutoField(primary_key=True)
@@ -27,8 +24,18 @@ class Products(Model):
     class Meta:
         database = orm_db
 
-
 class Inventory(Model):
+    transaction_id = AutoField(primary_key=True)
+    user_id = IntegerField()
+    product_id = IntegerField()
+    product_name = CharField(max_length=200)
+    value = DecimalField()
+    purchase_date = DateField(default=datetime.datetime.now())
+    
+    class Meta:
+        database = orm_db
+
+class Inventory2(Model):
     transaction_id = AutoField(primary_key=True)
     user_id = IntegerField()
     product_id = IntegerField()
@@ -42,7 +49,7 @@ class Inventory(Model):
 
 @orm_db.connection_context()
 def create_db_schema(): 
-    orm_db.create_tables([Users, Products, Inventory])
+    orm_db.create_tables([Users, Products, Inventory, Inventory2])
     products_list = [
         {'name':'Bananas', 'price':5.0},
         {'name':'Milk', 'price':10.0},
@@ -56,4 +63,3 @@ def create_db_schema():
             Products.create(name=product.get('name'),price=product.get('price'))
         except DatabaseError as e:
             log.info(e)
-

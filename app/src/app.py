@@ -148,25 +148,36 @@ def html_injection():
 @app.route('/shop')
 def shop():
     inventory = db.get_inventory_for_user(session['username'])
-    balance = session['balance']
-    error = request.args.get('race_error') if None != request.args.get('race_error') else ""
+    balance = session.get('balance')
+    # # error = request.args.get('race_error') if None != request.args.get('race_error') else ""
 
-    app.logger.info(f"race_error: {error}")
-    return render_template('race_condition.html',balance=balance,inventory=inventory,race_error=error)
+    # app.logger.info(f"race_error: {error}")
+    return render_template('race_condition.html',balance=balance,inventory=inventory)
 
 
 @app.route('/buy/<id>', methods=["POST"])
 def buy(id: int):
+
     error = Shop.buy(session["username"],id)
 
-    return redirect(url_for('shop',race_error=error))
+    if error == "":
+        return make_response(redirect('/shop'))
+    else:
+        app.logger.info(f"race_error: {error}")
+        return error
 
 
 @app.route('/sell/<id>', methods=["POST"])
 def sell(id: int):
-    error = Shop.sell(session["username"],id)
+    data = request.form
+    product_id = data.get('product-id')
+    error = Shop.sell(session["username"], id, int(product_id))
 
-    return redirect(url_for('shop',race_error=error))
+    if error == "":
+        return make_response(redirect('/shop'))
+    else:
+        app.logger.info(f"race_error: {error}")
+        return error
 
 
 if __name__ == '__main__':

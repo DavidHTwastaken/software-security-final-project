@@ -67,7 +67,7 @@ class DB:
         self.conn.commit()
     
     def get_inventory_for_user(self, username: str) -> list[dict[any, any]]:
-        self.cur.execute("SELECT  inv.transaction_id, prod.name, prod.price, inv.purchase_date "
+        self.cur.execute("SELECT inv.transaction_id, inv.product_id, prod.name, prod.price, inv.purchase_date "
                         "FROM inventory AS inv "
                         "INNER JOIN products AS prod ON inv.product_id = prod.product_id "
                         "WHERE inv.user_id = (SELECT user_id FROM users WHERE username=%s LIMIT 1) "

@@ -47,7 +47,7 @@ def login():
         app.logger.info(f'Result from database for login attempt: {user}')
 
         if user:
-            session['difficulty'] = 0
+            session['difficulty'] = '0'
             session['username'] = username
             # session['balance'] = balance
 
@@ -80,7 +80,7 @@ def register():
         app.logger.info(f'Result from add_user: {user_created}')
 
         if user_created:
-            session['difficulty'] = 0
+            session['difficulty'] = '0'
             session['username'] = username
             balance = 50
             db.update_balance(username, balance)

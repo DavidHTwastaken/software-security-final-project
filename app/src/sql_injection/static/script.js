@@ -1,9 +1,10 @@
-document.getElementById("submit-btn").addEventListener("click", (event) => {
-  let answer = document.getElementById("answer").textContent;
+function submitAnswer(endpoint) {
+  const answerInput = document.getElementById("answer");
+  let answer = answerInput.textContent;
   if (answer === null) {
     return;
   }
-  fetch("/sqli/submit", {
+  fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -14,9 +15,12 @@ document.getElementById("submit-btn").addEventListener("click", (event) => {
     .then((res) => {
       if (res["success"]) {
         alert("Success!");
+      } else {
+        alert("Incorrect solution");
       }
+      answerInput.textContent = null;
     });
-});
+}
 
 document.getElementById("answer").addEventListener("keypress", (event) => {
   if (event.key === "Enter") {

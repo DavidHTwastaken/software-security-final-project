@@ -1,6 +1,41 @@
 {% extends 'base.html' %} {% block content %}
-<link rel="stylesheet" type="text/css" href="" />
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{{url_for('sql_injection.static', filename='styles.css')}}"
+/>
 
 <a id="prev-btn" href="{{url_for('bugs')}}" class="previous">&laquo; Go back</a>
-<div class="container"></div>
+<div id="content">
+  <label for="answer">Enter solution: </label>
+  <input type="text" name="answer" id="answer" />
+  <button
+    type="button"
+    id="submit-btn"
+    onclick="submitAnswer('{{url_for('sql_injection.submit')}}')"
+  >
+    Submit
+  </button>
+  <form action="{{url_for('sql_injection.index')}}" method="get">
+    <label for="query">Search for products: </label>
+    <input type="text" name="query" id="query" />
+    <button type="submit" id="search-btn">Search</button>
+  </form>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Price</th>
+    </tr>
+    {% for result in results %}
+    <tr>
+      <td>{{result.product_id}}</td>
+      <td>{{result.name}}</td>
+      <td>{{result.price}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+<script src="{{url_for('sql_injection.static', filename='script.js')}}"></script>
 {% endblock %}

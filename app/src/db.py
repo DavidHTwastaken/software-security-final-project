@@ -9,13 +9,14 @@ class DB:
                                      host=os.environ['DB_HOST'],
                                      user=os.environ['DB_USERNAME'],
                                      password=os.environ['DB_PASSWORD'])
-        self.cur = self.conn.cursor(cursor_factory = RealDictCursor)
+        self.cur = self.conn.cursor(cursor_factory=RealDictCursor)
         self.seed()
 
     def seed(self):
         file_dir = os.path.dirname(os.path.realpath(__file__))
         seed_path = os.path.join(file_dir, "db.sql")
-        self.cur.execute(open(seed_path, "r").read())
+        ddl = open(seed_path, "r").read().replace("\\", "")
+        self.cur.execute(ddl)
         self.conn.commit()
 
     def get_users(self):
@@ -44,35 +45,31 @@ class DB:
 
     def get_product(self, id: int) -> list[dict[any, any]]:
         self.cur.execute("SELECT * FROM products "
-                         "WHERE product_id=%s"
-                        ,(id,))
-        
+                         "WHERE product_id=%s", (id,))
+
         self.conn.commit()
         return self.cur.fetchone()
-    
+
     def get_balance(self, username: str) -> list[dict[any, any]]:
         self.cur.execute("SELECT balance FROM users "
-                         "WHERE username=%s"
-                        ,(username,))
-        
+                         "WHERE username=%s", (username,))
+
         self.conn.commit()
         return self.cur.fetchone()
-    
+
     def update_balance(self, username: str, balance: float) -> list[dict[any, any]]:
         self.cur.execute("UPDATE users "
                          "SET balance= %s "
-                         "WHERE username=%s "
-                        ,(balance, username))
-        
+                         "WHERE username=%s ", (balance, username))
+
         self.conn.commit()
-    
+
     def get_inventory_for_user(self, username: str) -> list[dict[any, any]]:
         self.cur.execute("SELECT inv.transaction_id, inv.product_id, prod.name, prod.price, inv.purchase_date "
-                        "FROM inventory AS inv "
-                        "INNER JOIN products AS prod ON inv.product_id = prod.product_id "
-                        "WHERE inv.user_id = (SELECT user_id FROM users WHERE username=%s LIMIT 1) "
-                        ,(username,))
-        
+                         "FROM inventory AS inv "
+                         "INNER JOIN products AS prod ON inv.product_id = prod.product_id "
+                         "WHERE inv.user_id = (SELECT user_id FROM users WHERE username=%s LIMIT 1) ", (username,))
+
         self.conn.commit()
 
         rows = self.cur.fetchall()
@@ -82,22 +79,19 @@ class DB:
 
     def add_to_inventory(self, username: str, id: int) -> list[dict[any, any]]:
         self.cur.execute("INSERT INTO inventory (product_id, user_id) "
-                         "VALUES (%s, (SELECT user_id FROM users WHERE username=%s LIMIT 1)) "
-                        ,(id, username))
+                         "VALUES (%s, (SELECT user_id FROM users WHERE username=%s LIMIT 1)) ", (id, username))
 
         self.conn.commit()
-    
+
     def remove_from_inventory(self, username: str, id: int) -> list[dict[any, any]]:
         self.cur.execute("DELETE FROM inventory "
-                         "WHERE transaction_id=%s AND user_id=(SELECT user_id FROM users WHERE username=%s LIMIT 1) "
-                        ,(id, username))
+                         "WHERE transaction_id=%s AND user_id=(SELECT user_id FROM users WHERE username=%s LIMIT 1) ", (id, username))
 
         self.conn.commit()
 
     def get_product_from_inventory(self, username: str, id: int) -> list[dict[any, any]]:
         self.cur.execute("SELECT * FROM inventory "
-                         "WHERE transaction_id=%s AND user_id=(SELECT user_id FROM users WHERE username=%s LIMIT 1) "
-                        ,(id, username))
+                         "WHERE transaction_id=%s AND user_id=(SELECT user_id FROM users WHERE username=%s LIMIT 1) ", (id, username))
 
         self.conn.commit()
 

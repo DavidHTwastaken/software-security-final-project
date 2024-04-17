@@ -3,9 +3,9 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="../static/css/race.css" />
 
-<a id="prev-btn" href="{{url_for('bugs')}}" class="previous">&laquo; Go back</a>
+<a id="prev-btn" href="{{url_for('bugs')}}" class="previous" style="margin-left: 20px;">&laquo; Go back</a>
 <div class="container">
-    <h1>Hello {{session['username']}}, welcome to <b>the Shop™</b></h1>
+    <h1>Hello {{ username }}, welcome to <b>the Shop™</b></h1> 
     <div>You have ${{ balance }} in your account.</div>
     <h3>What would you like to purchase today?</h3>
     <label>All our products are certified quality!</label>
@@ -88,20 +88,32 @@
             <th></th>
         </thead>
         <tbody>
-            {% for e in inventory %}
-                <tr>
-                    <td>{{e.transaction_id}}</td>
-                    <td>{{e.name}}</td>
-                    <td>{{e.price}}</td>
-                    <td>{{e.purchase_date}}</td>
-                    <td>
-                        <form action="/sell/{{e.transaction_id}}" method="post">
-                            <input type="hidden" value="{{ e.product_id }}" id="product-id" name="product-id"/>
-                            <input type="submit" value="Sell"/>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
+            {% if '1' == session["difficulty"] %}
+                {% for e in inventory %}
+                    <tr>
+                        <td></td>
+                        <td>{{e.product_name}}</td>
+                        <td>{{e.value}}</td>
+                        <td>{{e.purchase_date}}</td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for e in inventory %}
+                    <tr>
+                        <td>{{e.transaction_id}}</td>
+                        <td>{{e.product_name}}</td>
+                        <td>{{e.value}}</td>
+                        <td>{{e.purchase_date}}</td>
+                        <td>
+                            <form action="/sell/{{e.transaction_id}}" method="post">
+                                <input type="hidden" value="{{ e.product_id }}" id="product-id" name="product-id"/>
+                                <input type="submit" value="Sell"/>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
         </tbody>
     </table>
 </div>

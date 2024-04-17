@@ -1,101 +1,174 @@
-import psycopg2
-from db import DB
+from .models import Inventory2, orm_db, Users, Products, Inventory, DatabaseError
 from flask import session
 import logging
+from uuid import uuid4
 
 log = logging.getLogger('app.shop')
 
-db = DB()
+'level one is doing it as is'
 
+'level 2 -> disable selling but keep that endpoint open'
+
+'level 3 -> lock val with atomicity'
 
 class Shop:
     @staticmethod
-    def buy(username: str, id: int):
+    @orm_db.connection_context()
+    def login(username: str, password: str):
+        users_orm = Users.select().where(Users.username==username).execute()
+
+        if 0 == len(users_orm):
+            session_token = str(uuid4())
+            try:
+                Users.create(username=username,password=password,token=session_token,balance=200)
+            except DatabaseError as e:
+                log.debug(e)
+                return None
+            return session_token
+        
+        user = users_orm[0]
+        if password != user.password:
+            return None
+        
+        return user.token
+    
+    @staticmethod
+    @orm_db.connection_context()
+    def buy(session_token: str, id: int):
         try:
-            product = {}
-            balance = {}
-
-            try:
-                product = db.get_product(id)
-                balance = db.get_balance(username)
-            except psycopg2.DatabaseError as e:
-                log.info(e)
-                return "Oopsie, an error occured, check server logs"
-            
-            working_balance = float(balance.get('balance'))
-
-            if None == product:
-                return "Product not found"
-
-            value = float(product.get('price'))
-
-            if value > balance:
-                return "Insufficient funds"
-
-            working_balance = working_balance - value
-
-            try:
-                db.update_balance(username, working_balance)
-                db.add_to_inventory(username,id)
-
-            except psycopg2.DatabaseError as e:
-                log.info(e)
-                return "Oopsie, an error occured, check server logs"
-            
-           
-            session['balance'] = working_balance
-            log.info(f"The current balance is {balance}")
-
-            if 5 == int(id):
-                return "Congratulations, you solved the challenge"
-            
-            return ""
-        except Exception as e:
-            log.info(e)
+            product = Products.get(Products.product_id==id)
+            user = Users.get(Users.token==session_token)
+        except DatabaseError as e:
+            log.debug(e)
             return "Oopsie, an error occured, check server logs"
+
+        log.debug(f"product is {product} of type {type(product)}")
+        log.debug(f"user is {user} of type {type(user)}")
+
+        if user.balance < product.price:
+            return "Insufficient funds"
+        
+        working_balance = user.balance - product.price
+
+        try:
+            Inventory.create(user_id=user.user_id, product_id=product.product_id, value=product.price, product_name=product.name)
+            Users.update(balance=working_balance).where(Users.user_id==user.user_id).execute()
+        except DatabaseError as e:
+            log.debug(e)
+            return "Oopsie, an error occured, check server logs"
+        
+        if product.name == "PS5":
+            return "Congratulations, you have solved the race condition challenge"
+        
+        return ""
+    
+    @staticmethod
+    @orm_db.connection_context()
+    def sell(session_token: str, transaction_id: int):
+        try:
+            inventory_product = Inventory.get(Inventory.transaction_id == transaction_id)
+            user = Users.get(session_token==Users.token)
+        except DatabaseError as e:
+            log.debug(e)
+            return "Oopsie, an error occured, check server logs"
+
+        new_balance = user.balance + inventory_product.value
+
+        try:
+            Inventory.delete().where(Inventory.transaction_id==inventory_product.transaction_id).execute()
+            Users.update(balance=new_balance).where(Users.user_id==user.user_id).execute()
+        except DatabaseError as e:
+            log.info(e)
+            return "Oopsie, an error occured, check server logs"        
+
+        return ""
 
     @staticmethod
-    def sell(username: str, transaction_id: int, product_id: int):
-        try:
-            product_inventory = [{}]
-            product = {}
-            balance = {}
-
-            try:
-                product_inventory = db.get_product_from_inventory(username, transaction_id)
-                product = db.get_product(product_id)
-                balance = db.get_balance(username)
-            except psycopg2.DatabaseError as e:
-                log.info(e)
-                return "Oopsie, an error occured, check server logs"
-            
-            if None == product_inventory:
-                return "Product doesn't exist in inventory"
-            
-            
-            log.info(f'the product info is {product}')
-            value = float(product.get('price'))
-            log.info(f'the value is {value} of type {type(value)}')
-            working_balance = float(balance.get('balance'))
-            
-            working_balance = working_balance + value
-
-            new_balance = {}
-            try:
-                db.update_balance(username, working_balance)
-                db.remove_from_inventory(username,transaction_id)
-                new_balance = db.get_balance(username)
-
-            except psycopg2.DatabaseError as e:
-                log.info(e)
-                return "Oopsie, an error occured, check server logs"
-            
-            updated_working_balance = float(new_balance.get('balance'))
-            session['balance'] = updated_working_balance
-            log.info(f"The current balance is {updated_working_balance}")
-
-            return ""
+    @orm_db.connection_context()
+    def get_user(session_token: str):
+        users_orm = Users.select().where(session_token==Users.token)
         
-        except Exception as e:
-            log.info(e)
+        if 0 == len(users_orm):
+            return False, 0, None, ""
+        
+        user = users_orm[0]
+        inventory_orm = Inventory.select().where(Inventory.user_id==user.user_id)
+
+        return True, user.balance, [_ for _ in inventory_orm], user.username
+    
+    @staticmethod
+    @orm_db.connection_context()
+    def buy2(session_token: str, id: int):
+        try:
+            product = Products.get(Products.product_id==id)
+            user = Users.get(Users.token==session_token)
+        except DatabaseError as e:
+            log.debug(e)
             return "Oopsie, an error occured, check server logs"
+
+        log.debug(f"product is {product} of type {type(product)}")
+        log.debug(f"user is {user} of type {type(user)}")
+
+        if user.balance < product.price:
+            return "Insufficient funds"
+        
+        working_balance = user.balance - product.price
+
+        try:
+            Inventory2.create(user_id=user.user_id, product_id=product.product_id, value=product.price, product_name=product.name)
+            Users.update(balance=working_balance).where(Users.user_id==user.user_id).execute()
+        except DatabaseError as e:
+            log.debug(e)
+            return "Oopsie, an error occured, check server logs"
+        
+        return ""
+    
+    @staticmethod
+    @orm_db.connection_context()
+    def sell2(session_token: str, transaction_id: int):
+        user = Users.get(session_token==Users.token)
+        lock = str(uuid4())
+        with orm_db.atomic() as transaction:
+            try:
+                isLocked = Inventory2.update(lock=lock).where(Inventory2.transaction_id==transaction_id).where(Inventory2.user_id==user.user_id).where(Inventory2.lock=="").execute()
+                transaction.commit()
+            except DatabaseError as e:
+                transaction.rollback()
+                log.debug(e)
+                return "Oopsie, an error occured, check server logs"
+            
+        if 1 != isLocked:
+            return "Lock can't be processed"
+        
+        try:
+            inventory_product = Inventory2.get(Inventory2.transaction_id == transaction_id)
+        except DatabaseError as e:
+            log.debug(e)
+            return "Oopsie, an error occured, check server logs"
+        
+        if lock != inventory_product.lock:
+            return "Lock check failed"
+        
+        new_balance = user.balance + inventory_product.value
+
+        try:
+            Inventory2.delete().where(Inventory2.transaction_id==inventory_product.transaction_id).execute()
+            Users.update(balance=new_balance).where(Users.user_id==user.user_id).execute()
+        except DatabaseError as e:
+            log.debug(e)
+            return "Oopsie, an error occured, check server logs" 
+        
+        return ""
+    
+    @staticmethod
+    @orm_db.connection_context()
+    def get_user2(session_token: str):
+        users_orm = Users.select().where(session_token==Users.token)
+        
+        if 0 == len(users_orm):
+            return False, 0, None, ""
+        
+        user = users_orm[0]
+        inventory_orm = Inventory2.select().where(Inventory2.user_id==user.user_id)
+
+        return True, user.balance, [_ for _ in inventory_orm], user.username

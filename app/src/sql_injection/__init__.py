@@ -8,18 +8,20 @@ db.conn.autocommit = True
 
 
 def handle_difficulty(query: str) -> tuple[str, str | None]:
-    diff = session.setdefault('difficulty', 0)
-    if diff == 0:
+    diff = session.setdefault('difficulty', '0')
+    if diff == '0':
         pattern = f'{query.lower()}%'
-        string = f"SELECT * FROM products WHERE LOWER(name) LIKE '{pattern}'"
-        current_app.logger.info(string)
+        string = f"SELECT product_id, name, round(price, 2) as price \
+            FROM products WHERE LOWER(name) LIKE '{pattern}'"
         return (string, None)
-    if diff == 1:
-        pattern = f'{query.lower()}%'
-        string = f"SELECT * FROM products WHERE LOWER(name) LIKE '{pattern}'"
+    if diff == '1':
+        pattern = f'{query.lower()}%'.replace(
+            "'", "\\'").replace('"', '\\"').replace(';', '\\;')
+        string = f"SELECT product_id, name, round(price, 2) as price \
+            FROM products WHERE LOWER(name) LIKE '{pattern}'"
         return (string, None)
-    if diff == 2:
-        string = "SELECT * FROM products WHERE LOWER(name) LIKE %s"
+    if diff == '2':
+        string = "SELECT product_id, name, round(price, 2) as price FROM products WHERE LOWER(name) LIKE %s"
         pattern = f'{query.lower()}%'
         return (string, pattern)
 
@@ -30,15 +32,18 @@ def index():
     try:
         if query:
             string, pattern = handle_difficulty(query)
+            current_app.logger.info(f'String: {string}, Pattern: {pattern}')
             if pattern:
                 db.cur.execute(string, (pattern,))
             else:
                 db.cur.execute(string)
         else:
-            db.cur.execute("SELECT * FROM products")
+            db.cur.execute(
+                "SELECT product_id, name, round(price, 2) as price FROM products")
     except Exception as e:
         current_app.logger.error(e)
-        flash(f'Error: {e}', 'error')
+        if session.setdefault('difficulty', '0') == '0':
+            flash(f'Error: {e}', 'error')
         return render_template('sql_injection.html')
     results = db.cur.fetchall()
     current_app.logger.info(f'Results: {results}')

@@ -58,7 +58,7 @@ VALUES
     ('Dell XPS 15', 1399.99),
     ('Nike Air Max', 99.99),
     ('Adidas Ultraboost', 139.99),
-    ('Dr. Scholl\'\'s Shoes', 99.99);
+    ('Dr. Scholl''s Shoes', 99.99);
 
 INSERT INTO
     inventory (user_id, product_id)
